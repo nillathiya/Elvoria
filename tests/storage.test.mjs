@@ -69,6 +69,30 @@ test("a read-modify-write under load never interleaves", async () => {
   assert.equal(counter.count, BUMPS, "each increment saw the previous one's write");
 });
 
+test("heavy concurrent writes complete without hitting the lock timeout", async () => {
+  // Regression guard. An earlier build let every waiter poll the lock file on a
+  // backoff, so the last of N callers waited roughly N x the work time; 40
+  // concurrent inserts took ~8s idle and, under CPU load, blew past the 10s
+  // acquire timeout and failed as LOCK_TIMEOUT. In production that is a handful
+  // of simultaneous registrations turning into 503s.
+  const started = Date.now();
+
+  const results = await Promise.allSettled(
+    Array.from({ length: 60 }, (_, i) => insert("transactions", { id: `tx_${i}`, n: i }))
+  );
+
+  const failed = results.filter((r) => r.status === "rejected");
+  assert.equal(failed.length, 0, `writes failed: ${failed.map((f) => f.reason?.code).join(", ")}`);
+
+  const rows = await readCollection("transactions");
+  assert.equal(rows.length, 60, "every write survived");
+
+  // Generous: the point is to catch a return to per-waiter polling (which was
+  // ~8s for fewer writes), not to police exact throughput on a loaded machine.
+  const elapsed = Date.now() - started;
+  assert.ok(elapsed < 5000, `60 concurrent inserts took ${elapsed}ms — polling may be back`);
+});
+
 test("collection file is always valid JSON, never truncated", async () => {
   const raw = await fs.readFile(path.join(TMP, "users.json"), "utf8");
   assert.doesNotThrow(() => JSON.parse(raw));
@@ -95,18 +119,37 @@ test("withLock serializes holders of the same lock name", async () => {
 });
 
 test("different lock names do not block each other", async () => {
-  const order = [];
-  await Promise.all([
-    withLock("lock-a", async () => {
-      await new Promise((r) => setTimeout(r, 30));
-      order.push("a");
-    }),
-    withLock("lock-b", async () => {
-      order.push("b");
-    }),
-  ]);
+  // Signalled rather than timed. An earlier version raced a 30ms sleep in
+  // lock-a against lock-b finishing, and asserted the finish order — which
+  // flaked under CPU load, when lock-b's own fs.open could outlast the sleep.
+  // Here lock-b runs while lock-a is provably still held: if the locks were to
+  // block each other this hangs until the test times out, which is an
+  // unambiguous failure rather than a coin flip.
+  let markAcquired;
+  let releaseA;
+  const aIsHeld = new Promise((resolve) => {
+    markAcquired = resolve;
+  });
+  const aMayRelease = new Promise((resolve) => {
+    releaseA = resolve;
+  });
 
-  assert.deepEqual(order, ["b", "a"], "lock-b must not wait on the slower lock-a");
+  const aTask = withLock("lock-a", async () => {
+    markAcquired();
+    await aMayRelease;
+  });
+
+  await aIsHeld; // lock-a is now definitely held
+
+  let bRan = false;
+  await withLock("lock-b", async () => {
+    bRan = true;
+  });
+
+  assert.equal(bRan, true, "lock-b must not wait on the unrelated lock-a");
+
+  releaseA();
+  await aTask;
 });
 
 test("lock is released even when the body throws", async () => {
