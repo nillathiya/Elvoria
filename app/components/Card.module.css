@@ -1,0 +1,66 @@
+.card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+
+/* ---------- Padding ---------- */
+.pad-sm { padding: var(--space-lg); }
+.pad-md { padding: var(--space-xl); }
+.pad-lg { padding: var(--space-2xl); }
+
+/* ---------- Variants ---------- */
+.default {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.glass {
+  background: rgba(21, 26, 33, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-card);
+}
+
+.outlined {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.highlighted {
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 207, 1, 0.2), var(--shadow-card);
+}
+
+/* ---------- Hover ---------- */
+.hoverable {
+  cursor: default;
+}
+.hoverable::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 207, 1, 0.5),
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: var(--transition);
+  pointer-events: none;
+}
+.hoverable:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+}
+.hoverable:hover::after {
+  opacity: 1;
+}

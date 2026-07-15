@@ -1,0 +1,154 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input,
+.select {
+  width: 100%;
+  height: 52px;
+  padding: 18px var(--space-lg) 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: var(--transition);
+  outline: none;
+}
+
+.hasIcon .input,
+.hasIcon .select {
+  padding-left: 46px;
+}
+
+.input::placeholder {
+  color: transparent;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 207, 1, 0.15);
+  background: var(--bg-elevated);
+}
+
+/* Floating label */
+.floating {
+  position: absolute;
+  left: var(--space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.hasIcon .floating {
+  left: 46px;
+}
+
+.input:focus + .floating,
+.input:not(:placeholder-shown) + .floating {
+  top: 15px;
+  transform: translateY(0);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+.input:not(:focus):not(:placeholder-shown) + .floating {
+  color: var(--text-secondary);
+}
+
+/* Static label for selects (always floated) */
+.floatingStatic {
+  position: absolute;
+  left: var(--space-lg);
+  top: 15px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+.hasIcon .floatingStatic {
+  left: 46px;
+}
+
+.leadIcon {
+  position: absolute;
+  left: var(--space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: flex;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.control:focus-within .leadIcon {
+  color: var(--accent);
+}
+
+.toggle {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: flex;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+.toggle:hover {
+  color: var(--text-primary);
+}
+
+/* Select */
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-top: 18px;
+}
+.selectArrow {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+}
+.select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+/* Error state */
+.hasError .input,
+.hasError .select {
+  border-color: var(--error);
+}
+.hasError .input:focus,
+.hasError .select:focus {
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, 0.15);
+}
+
+.error {
+  font-size: 12px;
+  color: var(--error);
+}
+.helper {
+  font-size: 12px;
+  color: var(--text-secondary);
+}

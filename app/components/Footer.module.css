@@ -1,0 +1,94 @@
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--space-2xl) var(--space-4xl);
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-2xl);
+  border-top: 1px solid var(--border);
+}
+
+.legal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 720px;
+}
+.legal a {
+  color: var(--info);
+  text-decoration: underline;
+}
+.legal a:hover {
+  opacity: 0.8;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-content: start;
+}
+.link {
+  font-size: 13.5px;
+  color: var(--info);
+  width: fit-content;
+  transition: var(--transition);
+}
+.link:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+/* Exness dark theme uses warm gold footer links */
+:global(:root[data-theme="dark"]) .link,
+:global(:root[data-theme="dark"]) .legal a {
+  color: #e7c24d;
+}
+
+.copy {
+  grid-column: 1 / -1;
+  padding-top: var(--space-lg);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Floating chat bubble */
+.chat {
+  position: fixed;
+  right: var(--space-xl);
+  bottom: var(--space-xl);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow-elevated);
+  transition: var(--transition);
+}
+.chat:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .footer {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .links {
+    grid-template-columns: 1fr;
+  }
+  .chat {
+    width: 46px;
+    height: 46px;
+  }
+}

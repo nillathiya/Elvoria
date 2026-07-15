@@ -1,0 +1,290 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin-top: 4px;
+  color: var(--text-secondary);
+}
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: var(--space-lg);
+}
+
+/* Total balance */
+.totalBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+.totalLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.totalValue {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+
+/* Coin badge */
+.coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+/* Assets grid */
+.assets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+.assetCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.assetTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.assetName {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+  min-width: 0;
+}
+.assetSym {
+  font-size: 15px;
+  font-weight: 600;
+}
+.assetFull {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.assetBalances {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.assetCrypto {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.assetUsd {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Layout: receive + recent */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* Receive panel */
+.receiveCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  padding: 4px;
+  background: var(--bg-input);
+  border-radius: var(--radius-md);
+}
+.tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+.tab:hover {
+  color: var(--text-primary);
+}
+.tabActive {
+  background: var(--bg-card);
+  color: var(--accent);
+  box-shadow: var(--shadow-card);
+}
+
+.depositBody,
+.withdrawBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* QR placeholder */
+.qrWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.qr {
+  width: 180px;
+  height: 180px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-elevated);
+  background-image:
+    linear-gradient(45deg, var(--text-primary) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--text-primary) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--text-primary) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--text-primary) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+  opacity: 0.9;
+}
+.qrHint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Address field */
+.addressField {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+.addressText {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--accent);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.copyBtn:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+}
+
+.note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Recent crypto tx */
+.recentCard {
+  display: flex;
+  flex-direction: column;
+}
+.txList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.txRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border);
+}
+.txRow:last-child {
+  border-bottom: none;
+}
+.txInfo {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+}
+.txType {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.txTime {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.txRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.txAmount {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .assets {
+    grid-template-columns: 1fr;
+  }
+}

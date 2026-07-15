@@ -1,0 +1,117 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin-top: 4px;
+  max-width: 620px;
+  color: var(--text-secondary);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: var(--space-lg);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  position: sticky;
+  top: var(--space-lg);
+}
+.saveBtn {
+  margin-top: var(--space-xs);
+}
+
+.listCard {
+  min-width: 0;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "main action"
+    "addr action";
+  align-items: center;
+  gap: 4px var(--space-md);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+.row:last-child {
+  border-bottom: none;
+}
+.rowMain {
+  grid-area: main;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.rowName {
+  font-size: 14px;
+  font-weight: 600;
+}
+.addr {
+  grid-area: addr;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.row :global(button) {
+  grid-area: action;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .formCard {
+    position: static;
+  }
+}
+
+/* Stack the row on small screens so nothing overflows */
+@media (max-width: 520px) {
+  .row {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "addr"
+      "action";
+    gap: 6px;
+  }
+  .row :global(button) {
+    justify-self: start;
+  }
+  .addr {
+    white-space: normal;
+    word-break: break-all;
+  }
+}

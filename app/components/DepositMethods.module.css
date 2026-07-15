@@ -1,0 +1,280 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  max-width: 1080px;
+}
+
+/* ---------- Header ---------- */
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.forRow {
+  margin-top: var(--space-sm);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.flag {
+  font-size: 16px;
+  line-height: 1;
+}
+.country {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.change {
+  margin-left: 4px;
+  color: var(--info);
+  font-weight: 600;
+}
+.change:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Section ---------- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+}
+
+/* ---------- Method card ---------- */
+.method {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  padding-right: 44px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  transition: var(--transition);
+}
+.method:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-card);
+}
+
+.methodIcon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+.tick {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.name {
+  margin-bottom: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.meta {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.go {
+  position: absolute;
+  top: 50%;
+  right: var(--space-lg);
+  transform: translateY(-50%);
+  display: flex;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+.method:hover .go {
+  color: var(--accent-contrast);
+  transform: translateY(-50%) translateX(2px);
+}
+:global(:root[data-theme="dark"]) .method:hover .go {
+  color: var(--accent);
+}
+
+/* ---------- QR modal (rendered in a portal on <body>) ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: rgba(2, 5, 14, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: fadeIn 0.18s var(--ease) both;
+}
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-elevated);
+  animation: scaleIn 0.2s var(--ease) both;
+}
+.modalClose {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+}
+.modalClose:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+.modalNet {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.qrBox {
+  margin: var(--space-md) 0;
+  width: 220px;
+  height: 220px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.qr {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.qrEmpty {
+  color: #6a6d74;
+  font-size: 13px;
+  text-align: center;
+  padding: 0 var(--space-lg);
+}
+.addrLabel {
+  margin-top: var(--space-xs);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+.addrRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 10px var(--space-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.addr {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  word-break: break-all;
+}
+.copyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+.copyBtn:hover {
+  background: var(--bg-hover);
+  color: var(--accent-contrast);
+}
+:global(:root[data-theme="dark"]) .copyBtn:hover {
+  color: var(--accent);
+}
+.copyBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.modalNote {
+  margin-top: var(--space-sm);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .method {
+    padding: var(--space-lg);
+    padding-right: 40px;
+  }
+  .modal {
+    padding: var(--space-xl);
+  }
+}

@@ -1,0 +1,221 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin-top: 4px;
+  color: var(--text-secondary);
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+.sectionSub {
+  margin-top: 4px;
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.green {
+  color: var(--success);
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xl);
+}
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.overlineTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: var(--space-xs);
+}
+.apy {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.apyUnit {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.apySub {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.heroRight {
+  flex-shrink: 0;
+}
+
+/* Tiles */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.tileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--accent);
+  margin-bottom: var(--space-xs);
+}
+.tileLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tileValue {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Grid: calculator + history */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.calc {
+  display: flex;
+  flex-direction: column;
+}
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+.resultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+.resultLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.resultValue {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.resultStrong {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.resultDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+/* History */
+.history {
+  display: flex;
+  flex-direction: column;
+}
+.historyList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.historyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border);
+}
+.historyRow:last-child {
+  border-bottom: none;
+}
+.historyDate {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.historyAmount {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--success);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1024px) {
+  .tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 767px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+  .heroRight {
+    width: 100%;
+  }
+  .tiles {
+    grid-template-columns: 1fr;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

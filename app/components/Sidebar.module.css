@@ -1,0 +1,339 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  width: var(--sidebar-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  transition: transform 0.28s var(--ease), width 0.24s var(--ease);
+}
+
+/* Taller than --header-height on purpose: the lockup bakes in the wordmark and tagline,
+   so it needs ~84px of height to stay legible. The trade-off is that this divider no
+   longer lines up with the main Header's — set height back to var(--header-height) and
+   drop .brandLockup to size 40 to restore that alignment. */
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 116px;
+  padding: 0 var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Take the free space the hidden .closeBtn leaves behind so the brand centres in the
+   row rather than being pushed left by the parent's space-between. */
+.brand {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Full lockup by default; the rail swaps to .brandMark (see the rail blocks below). */
+.brandLockup {
+  display: inline-flex;
+}
+.brandMark {
+  display: none;
+}
+
+.closeBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+}
+.closeBtn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md);
+  overflow-y: auto;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top-level nav row (accordion header or single link) */
+.parent,
+.logout,
+.collapseBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: 11px var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.logout,
+.collapseBtn {
+  color: var(--text-secondary);
+}
+
+.parent:hover,
+.logout:hover,
+.collapseBtn:hover {
+  background: var(--bg-hover);
+}
+
+.parentActive {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+.parentActive .itemIcon {
+  color: var(--text-primary);
+}
+
+.itemLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.caret {
+  color: var(--text-muted);
+  transition: transform 0.2s var(--ease);
+  flex-shrink: 0;
+}
+.caretOpen {
+  transform: rotate(180deg);
+}
+
+/* Accordion children */
+.children {
+  display: flex;
+  flex-direction: column;
+  padding: 2px 0 6px;
+  animation: fadeIn 0.18s var(--ease) both;
+}
+.child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px var(--space-md) 9px 46px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.child:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.childActive {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.extIcon {
+  opacity: 0.55;
+}
+.childBadge {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--info) 16%, transparent);
+  color: var(--info);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Light theme: match Exness neutral, high-contrast nav ---------- */
+:global(:root[data-theme="light"]) .child {
+  color: #454c5a;
+}
+:global(:root[data-theme="light"]) .child:hover,
+:global(:root[data-theme="light"]) .childActive {
+  color: #0b1220;
+}
+:global(:root[data-theme="light"]) .itemIcon {
+  color: #4a5262;
+}
+:global(:root[data-theme="light"]) .parentActive .itemIcon {
+  color: #0b1220;
+}
+:global(:root[data-theme="light"]) .caret {
+  color: #9aa2ae;
+}
+:global(:root[data-theme="light"]) .childActive {
+  background: #eef1f5;
+}
+
+/* Referral promo card */
+.refer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-sm) var(--space-md) 0;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: var(--transition);
+}
+.refer:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+}
+.referIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--accent-muted);
+  color: var(--accent-contrast);
+  flex-shrink: 0;
+}
+
+.footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.collapseBtn {
+  display: none;
+  color: var(--text-muted);
+}
+
+.logout:hover {
+  background: rgba(255, 82, 82, 0.1);
+  color: var(--error);
+}
+
+/* Backdrop for mobile overlay */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+  background: rgba(2, 5, 14, 0.65);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s var(--ease), visibility 0.25s var(--ease);
+}
+
+/* ---------- Desktop collapse (driven by context) ---------- */
+@media (min-width: 1025px) {
+  .collapseBtn {
+    display: flex;
+  }
+  .sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+  }
+  /* The rail is only 76px wide, so swap the lockup for the bare emblem. */
+  .sidebar.collapsed .itemLabel,
+  .sidebar.collapsed .caret,
+  .sidebar.collapsed .children,
+  .sidebar.collapsed .referText,
+  .sidebar.collapsed .brandLockup {
+    display: none;
+  }
+  .sidebar.collapsed .brandMark {
+    display: inline-flex;
+  }
+  .sidebar.collapsed .parent,
+  .sidebar.collapsed .logout,
+  .sidebar.collapsed .collapseBtn,
+  .sidebar.collapsed .refer {
+    justify-content: center;
+    padding: 11px 0;
+    gap: 0;
+  }
+  .sidebar.collapsed .refer {
+    margin: var(--space-sm) var(--space-md) 0;
+  }
+  .sidebar.collapsed .brandRow {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* ---------- Tablet: forced icon rail ---------- */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sidebar {
+    width: var(--sidebar-collapsed);
+  }
+  .sidebar .itemLabel,
+  .sidebar .caret,
+  .sidebar .children,
+  .sidebar .referText,
+  .sidebar .brandLockup {
+    display: none;
+  }
+  .sidebar .brandMark {
+    display: inline-flex;
+  }
+  .parent,
+  .logout,
+  .collapseBtn,
+  .refer {
+    justify-content: center;
+    padding: 11px 0;
+    gap: 0;
+  }
+  .brandRow {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* ---------- Mobile: slide-in overlay ---------- */
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    box-shadow: var(--shadow-elevated);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .closeBtn {
+    display: flex;
+  }
+  .backdropOpen {
+    opacity: 1;
+    visibility: visible;
+  }
+}

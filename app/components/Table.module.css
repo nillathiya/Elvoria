@@ -1,0 +1,126 @@
+.wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 560px;
+}
+
+.th {
+  text-align: left;
+  padding: var(--space-md) var(--space-lg);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+  white-space: nowrap;
+}
+
+.thInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+.sortable:hover {
+  color: var(--text-primary);
+}
+.sortIcon {
+  display: inline-flex;
+  color: var(--text-muted);
+}
+
+.td {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: var(--transition);
+}
+.striped:nth-child(even) {
+  background: rgba(28, 34, 41, 0.4);
+}
+.table tbody tr:hover {
+  background: var(--bg-hover);
+}
+.table tbody tr:last-child .td {
+  border-bottom: none;
+}
+
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+
+.empty {
+  padding: var(--space-3xl) var(--space-lg);
+  text-align: center;
+  color: var(--text-muted);
+  border-bottom: none;
+}
+
+/* Mobile: turn rows into stacked cards */
+@media (max-width: 640px) {
+  .table {
+    min-width: 0;
+  }
+  .th {
+    display: none;
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .td {
+    display: block;
+    width: 100%;
+  }
+  .table tbody tr {
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+  .striped:nth-child(even) {
+    background: var(--bg-card);
+  }
+  .td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    text-align: right;
+    padding: var(--space-md) var(--space-lg);
+  }
+  .td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    text-align: left;
+  }
+  .right,
+  .center {
+    text-align: right;
+  }
+}

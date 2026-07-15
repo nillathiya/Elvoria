@@ -1,0 +1,116 @@
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.label {
+  display: inline-block;
+}
+
+/* ---------- Sizes ---------- */
+.sm {
+  height: 34px;
+  padding: 0 var(--space-md);
+  font-size: 13px;
+}
+.md {
+  height: 42px;
+  padding: 0 var(--space-lg);
+  font-size: 14px;
+}
+.lg {
+  height: 48px;
+  padding: 0 var(--space-xl);
+  font-size: 15px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* ---------- Variants ---------- */
+.primary {
+  background: var(--accent);
+  color: #0e1217;
+}
+.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+.primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.secondary {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+.secondary:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.outline {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+.outline:hover:not(:disabled) {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.ghost:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.danger {
+  background: rgba(255, 82, 82, 0.12);
+  color: var(--error);
+  border-color: rgba(255, 82, 82, 0.3);
+}
+.danger:hover:not(:disabled) {
+  background: var(--error);
+  color: #fff;
+}
+
+/* ---------- Loading spinner ---------- */
+.loading {
+  color: transparent;
+}
+.spinner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  color: inherit;
+}
+.primary .spinner {
+  border-color: #0e1217;
+  border-top-color: transparent;
+}
