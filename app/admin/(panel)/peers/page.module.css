@@ -1,0 +1,108 @@
+.page {
+  max-width: 1100px;
+}
+
+.head {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sub {
+  margin-top: 6px;
+  color: var(--text-muted, #8a8f98);
+  font-size: 14px;
+  max-width: 60ch;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formCard > form > * + * {
+  margin-top: 14px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border, #2a2f3a);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.rowName {
+  font-weight: 600;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.rowSub {
+  font-size: 13px;
+  color: var(--text-muted, #8a8f98);
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+/* Takes the full row width so the input never squeezes the buttons. */
+.resetRow {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.resetRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.empty {
+  color: var(--text-muted, #8a8f98);
+  font-size: 14px;
+  padding: 8px 4px;
+}

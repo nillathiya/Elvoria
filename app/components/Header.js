@@ -19,7 +19,7 @@ import {
   CandlestickChart,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { setAdminAuthed } from "@/lib/adminConfig";
+import { api } from "@/lib/api";
 import { LANGUAGES, getLangCode, setLangCode } from "./GoogleTranslate";
 import styles from "./Header.module.css";
 
@@ -296,14 +296,18 @@ export default function Header({ onMenuClick }) {
               <div className={styles.divider} />
               <button
                 className={[styles.dropItem, styles.signOut].join(" ")}
-                onClick={() => {
+                onClick={async () => {
                   setUserOpen(false);
+                  // Sessions are server-side, so signing out means telling the
+                  // server to destroy it — not flipping a flag in the browser.
                   if (isAdmin) {
-                    setAdminAuthed(false);
+                    await api.post("/api/admin/logout").catch(() => {});
                     router.replace("/admin");
                   } else {
-                    router.push("/");
+                    await api.post("/api/user/logout").catch(() => {});
+                    router.replace("/");
                   }
+                  router.refresh();
                 }}
               >
                 <LogOut size={17} /> Sign Out

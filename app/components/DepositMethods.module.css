@@ -278,3 +278,9 @@
     padding: var(--space-xl);
   }
 }
+
+.note {
+  color: var(--text-muted, #8a8f98);
+  font-size: 14px;
+  padding: 8px 0;
+}

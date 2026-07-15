@@ -1,0 +1,205 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Trash2, Wallet, X } from "lucide-react";
+import Card from "../../../components/Card";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Badge from "../../../components/Badge";
+import { useApp } from "../../../context/AppContext";
+import { api } from "@/lib/api";
+import styles from "./page.module.css";
+
+// Spec §8: each deposit method holds MANY receiving addresses, with an
+// "Add More" flow. The previous version kept one address per currency in
+// localStorage, which no server could ever verify a transaction against.
+export default function AdminDepositAddressPage() {
+  const { showToast } = useApp();
+  const [methods, setMethods] = useState([]);
+  const [methodId, setMethodId] = useState("");
+  const [addresses, setAddresses] = useState([]);
+  const [drafts, setDrafts] = useState([""]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api
+      .get("/api/admin/deposit-methods")
+      .then((d) => {
+        setMethods(d.methods);
+        if (d.methods.length) setMethodId(d.methods[0].id);
+      })
+      .catch((err) => showToast(err.message, "error"))
+      .finally(() => setLoading(false));
+  }, [showToast]);
+
+  const loadAddresses = useCallback(
+    (id) => {
+      if (!id) return;
+      api
+        .get(`/api/admin/deposit-methods/${id}/addresses`)
+        .then((d) => setAddresses(d.addresses))
+        .catch((err) => showToast(err.message, "error"));
+    },
+    [showToast]
+  );
+
+  useEffect(() => {
+    loadAddresses(methodId);
+    setDrafts([""]);
+  }, [methodId, loadAddresses]);
+
+  const method = methods.find((m) => m.id === methodId);
+
+  const saveAll = async () => {
+    const list = drafts.map((d) => d.trim()).filter(Boolean);
+    if (!list.length) return showToast("Enter at least one address", "error");
+
+    setSaving(true);
+    try {
+      // The whole batch goes in one request: the server validates every entry
+      // before writing any, so one typo cannot half-save the batch.
+      const { addresses: created } = await api.post(
+        `/api/admin/deposit-methods/${methodId}/addresses`,
+        { addresses: list }
+      );
+      showToast(`${created.length} address${created.length > 1 ? "es" : ""} added`);
+      setDrafts([""]);
+      loadAddresses(methodId);
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggle = async (addr) => {
+    const status = addr.status === "active" ? "inactive" : "active";
+    try {
+      await api.patch(`/api/admin/deposit-addresses/${addr.id}/status`, { status });
+      showToast(`Address ${status === "active" ? "enabled" : "disabled"}`);
+      loadAddresses(methodId);
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  };
+
+  const remove = async (addr) => {
+    try {
+      await api.del(`/api/admin/deposit-addresses/${addr.id}`);
+      showToast("Address deleted");
+      loadAddresses(methodId);
+    } catch (err) {
+      // The API refuses to delete an address a deposit request already used.
+      showToast(err.message, "error");
+    }
+  };
+
+  return (
+    <div className={`${styles.page} animate-in`}>
+      <header className={styles.head}>
+        <div>
+          <h1 className={styles.title}>Deposit addresses</h1>
+          <p className={styles.sub}>
+            Configure the receiving wallets for each method. Clients are shown one active
+            address at random, and only these addresses are accepted when a transaction is
+            verified.
+          </p>
+        </div>
+      </header>
+
+      {loading ? (
+        <Card>
+          <p className={styles.empty}>Loading…</p>
+        </Card>
+      ) : !methods.length ? (
+        <Card>
+          <p className={styles.empty}>
+            No deposit methods yet — create one on the Deposit methods page first.
+          </p>
+        </Card>
+      ) : (
+        <div className={styles.layout}>
+          <Card className={styles.formCard}>
+            <h2 className={styles.sectionTitle}>
+              <Wallet size={18} /> Add addresses
+            </h2>
+
+            <Input
+              type="select"
+              value={methodId}
+              onChange={(e) => setMethodId(e.target.value)}
+              options={methods.map((m) => ({
+                value: m.id,
+                label: `${m.name} · ${m.network}${m.status !== "active" ? " (inactive)" : ""}`,
+              }))}
+            />
+
+            {drafts.map((value, i) => (
+              <div key={i} className={styles.draftRow}>
+                <Input
+                  value={value}
+                  placeholder={method?.network === "TRON" ? "T…" : "0x…"}
+                  helper={i === 0 ? `Network: ${method?.network}` : undefined}
+                  onChange={(e) =>
+                    setDrafts((d) => d.map((v, j) => (j === i ? e.target.value : v)))
+                  }
+                />
+                {drafts.length > 1 && (
+                  <button
+                    type="button"
+                    className={styles.removeDraft}
+                    aria-label="Remove this address field"
+                    onClick={() => setDrafts((d) => d.filter((_, j) => j !== i))}
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <Button variant="outline" fullWidth icon={Plus} onClick={() => setDrafts((d) => [...d, ""])}>
+              Add More
+            </Button>
+            <Button size="lg" fullWidth icon={Wallet} loading={saving} onClick={saveAll} className={styles.saveBtn}>
+              Save addresses
+            </Button>
+          </Card>
+
+          <Card padding="sm" className={styles.listCard}>
+            <h2 className={styles.sectionTitle}>
+              Configured addresses <Badge variant="neutral" size="sm">{addresses.length}</Badge>
+            </h2>
+
+            {!addresses.length ? (
+              <p className={styles.empty}>
+                No addresses for this method yet. Clients cannot deposit until one is active.
+              </p>
+            ) : (
+              <div className={styles.list}>
+                {addresses.map((a) => (
+                  <div key={a.id} className={styles.row}>
+                    <div className={styles.rowMain}>
+                      <span className={styles.addr} title={a.address}>{a.address}</span>
+                      <Badge variant={a.status === "active" ? "success" : "neutral"} size="sm">
+                        {a.status}
+                      </Badge>
+                    </div>
+                    <div className={styles.rowActions}>
+                      <Button variant="outline" size="sm" onClick={() => toggle(a)}>
+                        {a.status === "active" ? "Disable" : "Enable"}
+                      </Button>
+                      <Button variant="outline" size="sm" icon={Trash2} onClick={() => remove(a)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Wallet, CircleUser, LogOut, X } from "lucide-react";
+import { Wallet, CircleUser, LogOut, X, Users, Layers } from "lucide-react";
 import Logo from "./Logo";
-import { setAdminAuthed } from "@/lib/adminConfig";
+import { api } from "@/lib/api";
 import styles from "./Sidebar.module.css";
 
 const cx = (...c) => c.filter(Boolean).join(" ");
 
 const ITEMS = [
+  { href: "/admin/peers", label: "Peers", icon: Users },
+  { href: "/admin/deposit-methods", label: "Deposit methods", icon: Layers },
   { href: "/admin/deposit-address", label: "Deposit address", icon: Wallet },
+  // Transaction monitoring (§20) lands with the verifiers in Phase 6-7.
   { href: "/admin/profile", label: "Profile", icon: CircleUser },
 ];
 
@@ -18,10 +21,13 @@ export default function AdminSidebar({ open = false, onClose }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const signOut = () => {
-    setAdminAuthed(false);
+  const signOut = async () => {
+    // The server deletes the session file; clearing a client flag would leave
+    // the cookie working.
+    await api.post("/api/admin/logout").catch(() => {});
     onClose?.();
-    router.push("/admin");
+    router.replace("/admin");
+    router.refresh();
   };
 
   return (

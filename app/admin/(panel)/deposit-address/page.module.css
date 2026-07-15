@@ -115,3 +115,58 @@
     word-break: break-all;
   }
 }
+
+/* --- multi-address management (spec §8) --- */
+
+.head {
+  margin-bottom: 24px;
+}
+
+.empty {
+  color: var(--text-muted, #8a8f98);
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+/* The remove button sits beside the input, aligned to its box rather than its
+   label, which only the first field has. */
+.draftRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.draftRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.removeDraft {
+  flex: none;
+  margin-top: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted, #8a8f98);
+  cursor: pointer;
+}
+
+.removeDraft:hover {
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+/* Addresses are long and must stay readable without stretching the row. */
+.row .addr {
+  overflow-wrap: anywhere;
+}
