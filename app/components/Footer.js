@@ -12,21 +12,26 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.legal}>
+        {/* These three paragraphs used to say the interface showed "mock data
+            for illustration" and that nothing entered here was "stored,
+            transmitted, or shared". Both became false once the real backend
+            landed: accounts, password hashes and deposit records are written to
+            storage, and the deposit addresses are live wallets. Telling people
+            their data is not stored while storing it is not a disclaimer worth
+            keeping. */}
         <p>
-          {BRAND} is a demonstration trading platform built for portfolio and educational
-          purposes only. It is not a licensed financial services provider, holds no client funds,
-          and does not execute real trades or process real payments.
+          {BRAND} is not a licensed financial services provider. It is not affiliated with,
+          endorsed by, or connected to any real brokerage.
         </p>
         <p>
-          The information shown in this interface is mock data for illustration. General Risk
-          Warning: CFDs are complex leveraged products that carry a high level of risk. They may
-          not be suitable for every investor, and you could lose more than your initial deposit.
-          Make sure you fully understand the risks involved before trading.{" "}
+          Deposit addresses shown here are real blockchain addresses. Cryptocurrency transfers
+          are irreversible: send only the named asset, on the named network, to the address shown
+          for your deposit. Anything else may be permanently lost.{" "}
           <Link href="/legal/risk-disclosure">Learn more</Link>
         </p>
         <p>
-          No personal or financial information entered here is stored, transmitted, or shared. This
-          project is not affiliated with, endorsed by, or connected to any real brokerage.
+          Your account details are stored by this service. Transactions are verified against
+          public blockchain data.
         </p>
       </div>
 

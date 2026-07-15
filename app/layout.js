@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "./context/AppContext";
 import GoogleTranslate from "./components/GoogleTranslate";
-import ChatWidget from "./components/ChatWidget";
 import PWARegister from "./components/PWARegister";
 import InstallPWA from "./components/InstallPWA";
 
@@ -52,10 +51,14 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <GoogleTranslate />
-        <AppProvider>
-          {children}
-          <ChatWidget />
-        </AppProvider>
+        {/* The live-chat widget was a keyword-matched bot with canned replies
+            that pointed at pages which no longer exist ("Payments & wallet →
+            Transfer", "Exness Terminal", a 40% revenue-share partner program).
+            It looked like a support channel and answered like one, on pages
+            where people send real, irreversible crypto transfers. A fake
+            support desk is worse than none, so it is gone rather than
+            restyled. */}
+        <AppProvider>{children}</AppProvider>
         <PWARegister />
         <InstallPWA />
       </body>
