@@ -3,11 +3,12 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, Phone } from "lucide-react";
+import { Mail, Lock, AtSign } from "lucide-react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Logo from "../components/Logo";
-import { BRAND, countries } from "@/lib/mockData";
+import { BRAND, countries } from "@/lib/config";
+import { api } from "@/lib/api";
 import styles from "./page.module.css";
 
 const strengthLabels = ["Too weak", "Weak", "Medium", "Strong", "Very strong"];
@@ -28,7 +29,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     country: "US",
     email: "",
-    phone: "",
+    username: "",
     password: "",
   });
   const [agree, setAgree] = useState(false);
@@ -47,11 +48,14 @@ export default function RegisterPage() {
     setErrors((er) => ({ ...er, [key]: null }));
   };
 
-  const handleSubmit = (e) => {
+  // Spec §2.3 / §3.3: this actually creates an account now. It previously ran
+  // a 700ms timer and redirected — no account was created and no password was
+  // ever checked, so the "signed-in" panel was open to anyone.
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const next = {};
     if (!form.email.trim()) next.email = "Email is required";
-    if (!form.phone.trim()) next.phone = "Phone number is required";
+    if (!form.username.trim()) next.username = "Username is required";
     if (!form.password.trim()) next.password = "Password is required";
     else if (strength < 2) next.password = "Choose a stronger password";
     if (!agree) next.agree = "You must accept the terms";
@@ -59,7 +63,23 @@ export default function RegisterPage() {
     if (Object.keys(next).length) return;
 
     setLoading(true);
-    setTimeout(() => router.push("/pa/trading/accounts"), 700);
+    try {
+      await api.post("/api/user/register", {
+        email: form.email,
+        username: form.username,
+        password: form.password,
+      });
+      // Registration does not issue a session (§3.3) — log in with the
+      // credentials just created, so one path owns lockout accounting.
+      await api.post("/api/user/login", { identifier: form.email, password: form.password });
+      router.replace("/pa");
+      router.refresh();
+    } catch (err) {
+      // Duplicate email/username comes back as a 409 from the server, which is
+      // the only place that can know.
+      setErrors({ email: err.message });
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,18 +117,18 @@ export default function RegisterPage() {
               autoComplete="email"
             />
 
-            <div className={styles.phoneRow}>
-              <div className={styles.dial}>{dial}</div>
-              <Input
-                type="tel"
-                label="Phone number"
-                icon={Phone}
-                value={form.phone}
-                onChange={update("phone")}
-                error={errors.phone}
-                autoComplete="tel"
-              />
-            </div>
+            {/* Username replaces the old phone field: the API stores email +
+                username + password, and a phone number it never keeps would be
+                asking for data with nowhere to go. */}
+            <Input
+              label="Username"
+              icon={AtSign}
+              value={form.username}
+              onChange={update("username")}
+              error={errors.username}
+              helper="3-32 characters. You can sign in with this or your email."
+              autoComplete="username"
+            />
 
             <div>
               <Input

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, ThumbsUp, Send, ChevronDown } from "lucide-react";
-import { BRAND } from "@/lib/mockData";
+import { BRAND } from "@/lib/config";
 import styles from "./ChatWidget.module.css";
 
 const MAX = 400;

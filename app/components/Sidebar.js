@@ -23,61 +23,18 @@ import Logo from "./Logo";
 import { useApp } from "../context/AppContext";
 import styles from "./Sidebar.module.css";
 
-// Exness-style personal-area navigation (adapted to the Elvoria brand).
+// Spec §2.3: a normal user views deposit methods, selects one, receives an
+// address and submits transaction info. The old navigation advertised trading
+// accounts, performance, signals, news, VPS, savings and copy trading — none
+// of which exist in this product; every one was a page rendering mock data.
 const NAV = [
   {
-    id: "trading",
-    label: "Trading",
-    icon: CandlestickChart,
-    children: [
-      { href: "/pa/trading/accounts", label: "Accounts" },
-      { href: "/pa/analytics", label: "Performance" },
-      { href: "/pa/transactions", label: "History of orders" },
-      { href: "/webtrading", label: "Exness Terminal", external: true, blank: true },
-    ],
-  },
-  {
     id: "payments",
-    label: "Payments & wallet",
+    label: "Payments",
     icon: WalletCards,
     children: [
       { href: "/pa/deposit", label: "Deposit" },
       { href: "/pa/withdraw", label: "Withdrawal" },
-      { href: "/pa/payments-and-wallet/transfer", label: "Transfer", badge: "New" },
-      { href: "/pa/payments-and-wallet/history", label: "Transaction history" },
-      { href: "/pa/payments-and-wallet/crypto-wallet", label: "Crypto wallet" },
-    ],
-  },
-  {
-    id: "insights",
-    label: "Insights",
-    icon: LineChart,
-    children: [
-      { href: "/pa/analytics/analystViews", label: "Trading signals" },
-      { href: "/pa/analytics/fxnews", label: "News" },
-      { href: "/pa/economic-calendar", label: "Economic Calendar" },
-    ],
-  },
-  {
-    id: "benefits",
-    label: "Exness benefits",
-    icon: Award,
-    children: [
-      { href: "/pa/exness-benefits/swapfree", label: "Trading Conditions" },
-      { href: "/pa/exness-benefits/savings", label: "Savings" },
-      { href: "/pa/exness-benefits/vps", label: "Virtual Private Server" },
-    ],
-  },
-  { id: "copy", label: "Copy Trading", icon: Copy, href: "/pa/socialtrading" },
-  { id: "support", label: "Support hub", icon: LifeBuoy, href: "/pa/support_hub/help_center" },
-  {
-    id: "profile",
-    label: "Profile",
-    icon: CircleUser,
-    children: [
-      { href: "/pa/settings/profile", label: "Verification" },
-      { href: "/pa/settings/security", label: "Security" },
-      { href: "/webtrading", label: "Trading Terminal", external: true, blank: true },
     ],
   },
 ];
@@ -193,12 +150,6 @@ export default function Sidebar({ open = false, onClose }) {
             );
           })}
         </nav>
-
-        {/* Referral promo card */}
-        <Link href="/pa/settings" className={styles.refer} onClick={onClose}>
-          <span className={styles.referIcon}><Users size={20} /></span>
-          <span className={styles.referText}>Refer traders, earn commission</span>
-        </Link>
 
         <div className={styles.footer}>
           <button

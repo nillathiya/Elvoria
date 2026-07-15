@@ -1,161 +1,53 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
+  max-width: 900px;
 }
 
 .head {
-  margin-bottom: var(--space-xs);
-}
-.greeting {
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.wave {
-  display: inline-block;
-  animation: waveHand 2.4s ease-in-out infinite;
-  transform-origin: 70% 70%;
-}
-@keyframes waveHand {
-  0%, 60%, 100% { transform: rotate(0deg); }
-  10%, 30% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-}
-.sub {
-  margin-top: 6px;
-  color: var(--text-secondary);
+  margin-bottom: 24px;
 }
 
-/* Balance cards */
-.balances {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-}
-.balanceCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-.balanceValue {
-  font-size: 30px;
+.title {
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
 }
 
-/* Quick actions */
-.quickCard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
+.sub {
+  margin-top: 6px;
+  color: var(--text-muted, #8a8f98);
+  font-size: 14px;
 }
-.sectionTitle {
+
+.cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ctaIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--accent-soft, rgba(68, 138, 255, 0.12));
+  color: var(--accent, #448aff);
+}
+
+.ctaBody {
+  flex: 1;
+  min-width: 200px;
+}
+
+.ctaTitle {
   font-size: 16px;
   font-weight: 600;
 }
-.quickActions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-}
 
-/* Grid layout */
-.grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: var(--space-lg);
-  align-items: start;
-}
-
-.cardHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-lg);
-}
-.viewAll {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  transition: var(--transition);
-}
-.viewAll:hover {
-  gap: 8px;
-}
-
-.tableCard,
-.accountsCard {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Account list */
-.accountList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-.accountItem {
-  padding: var(--space-lg);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-}
-.accountItem:hover {
-  border-color: var(--border-light);
-}
-.accountTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--space-md);
-}
-.accountId {
-  font-size: 15px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.accountMeta {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-.accountBalance {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-.accountFoot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: var(--space-md);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 767px) {
-  .greeting {
-    font-size: 24px;
-  }
-  .balances {
-    grid-template-columns: 1fr;
-  }
-  .quickActions {
-    grid-template-columns: 1fr;
-  }
-  .balanceValue {
-    font-size: 26px;
-  }
+.ctaText {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-muted, #8a8f98);
 }

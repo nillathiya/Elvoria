@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BRAND } from "@/lib/mockData";
+import { BRAND } from "@/lib/config";
 import { legalLinks } from "@/lib/legalDocs";
 import styles from "./Footer.module.css";
 

@@ -1,4 +1,4 @@
-import { BRAND } from "@/lib/mockData";
+import { BRAND } from "@/lib/config";
 
 // Three gold-on-transparent brand assets live in /public:
 //

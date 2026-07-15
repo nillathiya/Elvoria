@@ -23,58 +23,44 @@ import { api } from "@/lib/api";
 import { LANGUAGES, getLangCode, setLangCode } from "./GoogleTranslate";
 import styles from "./Header.module.css";
 
-// Help (?) mega-menu — two columns, matching the Exness "Tools & Services" popup.
+// Help (?) menu. Every "Tools & Services" entry here (MetaTrader, Trader's
+// Calculator, Tick History, Dividends on Indices…) pointed at a mock page that
+// no longer exists. Only the legal documents are real, so only they remain.
 const HELP_COLUMNS = [
   [
     {
-      title: "Tools & Services",
+      title: "Legal",
       items: [
-        { label: "MetaTrader4", href: "/webtrading", blank: true },
-        { label: "MetaTrader5", href: "/webtrading", blank: true },
-        { label: "Trader's Calculator", href: "/pa/analytics" },
-        { label: "Currency Converter", href: "/pa/analytics" },
-        { label: "Tick History", href: "/pa/transactions" },
-      ],
-    },
-  ],
-  [
-    {
-      title: "Trading",
-      items: [
-        { label: "Contract Specifications", href: "/legal/general-business-terms" },
-        { label: "Margin & Leverage", href: "/legal/risk-disclosure" },
-        { label: "Forex Market Trading Hours", href: "/pa/analytics" },
-        { label: "Dividends on Indices", href: "/pa/analytics" },
-      ],
-    },
-    {
-      title: "Help",
-      items: [
-        { label: "Help Center", href: "/pa/settings" },
-        { label: "How to Become Our Partner", href: "/legal/partnership-agreement" },
-        { label: "Suggest a feature", href: "/pa/settings" },
+        { label: "Client Agreement", href: "/legal/client-agreement" },
+        { label: "General Business Terms", href: "/legal/general-business-terms" },
+        { label: "Risk Disclosure", href: "/legal/risk-disclosure" },
+        { label: "Partnership Agreement", href: "/legal/partnership-agreement" },
       ],
     },
   ],
 ];
 
-function walletText(value, currency) {
-  return `${Number(value).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} ${currency}`;
+function initialsOf(name) {
+  return String(name || "?")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 export default function Header({ onMenuClick }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, wallet, theme, toggleTheme } = useApp();
+  const { user, theme, toggleTheme } = useApp();
 
   // The admin area reuses this header — keep its links inside /admin.
   const isAdmin = (pathname || "").startsWith("/admin");
+  // user is null until /api/user/me answers, and stays null when signed out.
   const identity = isAdmin
-    ? { name: "Administrator", email: "admin@elvoria.com", initials: "AD" }
-    : { name: user.name, email: user.email, initials: user.initials };
+    ? { name: "Administrator", email: "", initials: "AD" }
+    : {
+        name: user?.username || "Account",
+        email: user?.email || "",
+        initials: initialsOf(user?.username),
+      };
   const [langOpen, setLangOpen] = useState(false);
   const [lang, setLang] = useState("en");
   const [userOpen, setUserOpen] = useState(false);
@@ -102,11 +88,10 @@ export default function Header({ onMenuClick }) {
 
   const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
-  const notifications = [
-    { id: 1, title: "Deposit successful", desc: "$500.00 credited to #12345678", time: "2h ago" },
-    { id: 2, title: "Verification pending", desc: "Address proof under review", time: "1d ago" },
-    { id: 3, title: "New login detected", desc: "Chrome on Windows · New York", time: "3d ago" },
-  ];
+  // Notifications were three hardcoded fake events ("$500.00 credited to
+  // #12345678"). There is no notification source yet, so the tray shows an
+  // honest empty state rather than invented activity.
+  const notifications = [];
 
   return (
     <header className={styles.header}>
@@ -117,15 +102,15 @@ export default function Header({ onMenuClick }) {
       </div>
 
       <div className={styles.right}>
-        {/* Wallet balance — client-only; an admin has no client wallet */}
+        {/* The wallet balance shown here was a mock figure with nothing behind
+            it. Balances are not part of this spec, so the link just goes to
+            the deposit flow. */}
         {!isAdmin && (
           <Link href="/pa/deposit" className={styles.wallet}>
             <span className={styles.walletIcon}>
               <CreditCard size={16} />
             </span>
-            <span className={styles.walletValue}>
-              {walletText(wallet.balance, wallet.currency)}
-            </span>
+            <span className={styles.walletValue}>Deposit</span>
           </Link>
         )}
 
@@ -247,21 +232,8 @@ export default function Header({ onMenuClick }) {
           </button>
           {appsOpen && (
             <div className={[styles.dropdown, styles.appsMenu].join(" ")}>
-              <Link
-                href="/pa/trading/accounts"
-                className={styles.dropItem}
-                onClick={() => setAppsOpen(false)}
-              >
+              <Link href="/pa" className={styles.dropItem} onClick={() => setAppsOpen(false)}>
                 <LayoutGrid size={17} /> Personal area
-              </Link>
-              <Link
-                href="/webtrading"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.dropItem}
-                onClick={() => setAppsOpen(false)}
-              >
-                <CandlestickChart size={17} /> Exness terminal
               </Link>
             </div>
           )}
@@ -281,16 +253,12 @@ export default function Header({ onMenuClick }) {
                   <div className={styles.userInfoEmail}>{identity.email}</div>
                 </div>
               </div>
-              <Link
-                href={isAdmin ? "/admin/profile" : "/pa/settings/profile"}
-                className={styles.dropItem}
-                onClick={() => setUserOpen(false)}
-              >
-                <User size={17} /> Profile
-              </Link>
-              {!isAdmin && (
-                <Link href="/pa/settings" className={styles.dropItem} onClick={() => setUserOpen(false)}>
-                  <Settings size={17} /> Settings
+              {/* Only the admin has a profile page. The client-side profile
+                  and settings pages rendered mock verification steps and fake
+                  sessions, so they are gone. */}
+              {isAdmin && (
+                <Link href="/admin/profile" className={styles.dropItem} onClick={() => setUserOpen(false)}>
+                  <User size={17} /> Profile
                 </Link>
               )}
               <div className={styles.divider} />

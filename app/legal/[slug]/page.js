@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import Logo from "../../components/Logo";
 import { getLegalDoc, LEGAL_ORDER, legalLinks } from "@/lib/legalDocs";
-import { BRAND } from "@/lib/mockData";
+import { BRAND } from "@/lib/config";
 import styles from "./page.module.css";
 
 export function generateStaticParams() {
@@ -25,10 +25,10 @@ export default function LegalPage({ params }) {
     <div className={styles.wrap}>
       <header className={styles.topbar}>
         <div className={styles.topInner}>
-          <Link href="/pa/trading/accounts" className={styles.brand}>
+          <Link href="/pa" className={styles.brand}>
             <Logo variant="mark" size={36} />
           </Link>
-          <Link href="/pa/trading/accounts" className={styles.back}>
+          <Link href="/pa" className={styles.back}>
             <ArrowLeft size={16} /> Back to Personal area
           </Link>
         </div>
