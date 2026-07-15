@@ -1,5 +1,6 @@
 # Runtime data — never commit real deposit records, sessions or locks.
 *.json
+*.json.bak
 sessions/*
 locks/*
 logs/*
