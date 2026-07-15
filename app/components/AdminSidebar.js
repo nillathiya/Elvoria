@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Wallet, CircleUser, LogOut, X, Users, Layers } from "lucide-react";
+import { Wallet, CircleUser, LogOut, X, Users, Layers, Receipt } from "lucide-react";
 import Logo from "./Logo";
 import { api } from "@/lib/api";
 import styles from "./Sidebar.module.css";
@@ -13,7 +13,7 @@ const ITEMS = [
   { href: "/admin/peers", label: "Peers", icon: Users },
   { href: "/admin/deposit-methods", label: "Deposit methods", icon: Layers },
   { href: "/admin/deposit-address", label: "Deposit address", icon: Wallet },
-  // Transaction monitoring (§20) lands with the verifiers in Phase 6-7.
+  { href: "/admin/transactions", label: "Transactions", icon: Receipt },
   { href: "/admin/profile", label: "Profile", icon: CircleUser },
 ];
 

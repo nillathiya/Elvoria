@@ -106,3 +106,17 @@
   font-size: 14px;
   padding: 8px 4px;
 }
+
+/* Transaction search filters (spec §20). */
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+@media (max-width: 800px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
