@@ -54,6 +54,16 @@ const NAV = [
       { href: "/pa/payments-and-wallet/crypto-wallet", label: "Crypto wallet" },
     ],
   },
+  {
+    id: "insights",
+    label: "Insights",
+    icon: LineChart,
+    children: [
+      { href: "/pa/analytics/analystViews", label: "Trading signals" },
+      { href: "/pa/analytics/fxnews", label: "News" },
+      { href: "/pa/economic-calendar", label: "Economic calendar" },
+    ],
+  },
 ];
 
 const cx = (...c) => c.filter(Boolean).join(" ");
