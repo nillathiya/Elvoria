@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Layers, Plus } from "lucide-react";
+import { Layers, Plus, Pencil, X, Save } from "lucide-react";
 import Card from "../../../components/Card";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
@@ -27,19 +27,38 @@ const VERIFIERS = [
 const EMPTY = {
   id: "",
   name: "",
+  displayName: "",
   network: "BSC",
   assetType: "token",
   symbol: "",
   contractAddress: "",
   decimals: "18",
   requiredConfirmations: "5",
+  minAmount: "",
   verifier: "bsc-token-verifier",
 };
+
+// Editing reuses this same form, so a stored method has to come back as form
+// state: every field is a string here, and absent optionals are "" not null.
+const toForm = (m) => ({
+  id: m.id,
+  name: m.name ?? "",
+  displayName: m.displayName ?? "",
+  network: m.network,
+  assetType: m.assetType,
+  symbol: m.symbol ?? "",
+  contractAddress: m.contractAddress ?? "",
+  decimals: m.decimals == null ? "" : String(m.decimals),
+  requiredConfirmations: String(m.requiredConfirmations ?? "0"),
+  minAmount: m.minAmount ?? "",
+  verifier: m.verifier,
+});
 
 export default function AdminDepositMethodsPage() {
   const { showToast } = useApp();
   const [methods, setMethods] = useState([]);
   const [form, setForm] = useState(EMPTY);
+  const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -55,19 +74,47 @@ export default function AdminDepositMethodsPage() {
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const create = async (e) => {
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm(EMPTY);
+  };
+
+  const startEdit = (m) => {
+    setEditingId(m.id);
+    setForm(toForm(m));
+    // The form is the first card; on a phone it is otherwise off-screen and the
+    // Edit button would look like it did nothing.
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const submit = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
+      const isToken = form.assetType === "token";
       const payload = {
         ...form,
-        decimals: form.assetType === "token" ? Number(form.decimals) : null,
-        contractAddress: form.assetType === "token" ? form.contractAddress.trim() : null,
+        // A native coin has no contract and no decimals; sending stale token
+        // values would be meaningless and the server nulls them anyway.
+        decimals: isToken ? Number(form.decimals) : null,
+        contractAddress: isToken ? form.contractAddress.trim() : null,
         requiredConfirmations: Number(form.requiredConfirmations),
+        // Left blank means "no minimum" — as a string it would fail the decimal
+        // check (§18 keeps amounts as strings, never floats).
+        minAmount: form.minAmount.trim() === "" ? null : form.minAmount.trim(),
       };
-      await api.post("/api/admin/deposit-methods", payload);
-      showToast(`Method ${form.id} created`);
-      setForm(EMPTY);
+
+      if (editingId) {
+        // The id is the method's identity and every stored address hangs off
+        // it, so it is not in the payload — the server ignores it regardless.
+        await api.put(`/api/admin/deposit-methods/${editingId}`, payload);
+        showToast(`Method ${editingId} updated`);
+      } else {
+        await api.post("/api/admin/deposit-methods", payload);
+        showToast(`Method ${form.id} created`);
+      }
+
+      cancelEdit();
       load();
     } catch (err) {
       showToast(err.message, "error");
@@ -102,24 +149,45 @@ export default function AdminDepositMethodsPage() {
       <div className={styles.layout}>
         <Card className={styles.formCard}>
           <h2 className={styles.sectionTitle}>
-            <Plus size={18} /> Add method
+            {editingId ? <Pencil size={18} /> : <Plus size={18} />}
+            {editingId ? `Edit ${editingId}` : "Add method"}
           </h2>
-          <form onSubmit={create}>
+          <form onSubmit={submit}>
             <Input
               label="Method ID"
               value={form.id}
               placeholder="usdt_bep20"
-              helper="Lowercase, numbers and underscore. Cannot be changed later."
+              disabled={!!editingId}
+              helper={
+                editingId
+                  ? "The ID cannot be changed — addresses and transactions reference it."
+                  : "Lowercase, numbers and underscore. Cannot be changed later."
+              }
               onChange={(e) =>
                 setForm((f) => ({ ...f, id: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "") }))
               }
             />
-            <Input label="Display name" value={form.name} placeholder="USDT BEP20" onChange={set("name")} />
+            {/* Spec §7 lists "Method name" and "Display name" separately: the
+                first is what the admin files it under, the second is what a user
+                or peer reads. */}
+            <Input label="Method name" value={form.name} placeholder="USDT BEP20" onChange={set("name")} />
+            <Input
+              label="Display name"
+              value={form.displayName}
+              placeholder="Tether (BEP20)"
+              helper="Optional. Shown to users and peers; falls back to the method name."
+              onChange={set("displayName")}
+            />
             <Input
               type="select"
               label="Network"
               value={form.network}
               options={NETWORKS.map((n) => ({ value: n, label: n }))}
+              helper={
+                editingId
+                  ? "Cannot be changed once this method has addresses."
+                  : undefined
+              }
               onChange={set("network")}
             />
             <Input
@@ -159,6 +227,16 @@ export default function AdminDepositMethodsPage() {
               inputMode="numeric"
               onChange={set("requiredConfirmations")}
             />
+            {/* Spec §7 "minimum amount if required". The verifiers enforce this
+                on every transaction; leaving it blank means no minimum. */}
+            <Input
+              label="Minimum amount"
+              value={form.minAmount}
+              placeholder="10"
+              inputMode="decimal"
+              helper="Optional. Deposits below this are rejected. Blank means no minimum."
+              onChange={set("minAmount")}
+            />
             <Input
               type="select"
               label="Verifier"
@@ -168,9 +246,14 @@ export default function AdminDepositMethodsPage() {
               onChange={set("verifier")}
             />
 
-            <Button type="submit" size="lg" fullWidth icon={Layers} loading={saving}>
-              Create method
+            <Button type="submit" size="lg" fullWidth icon={editingId ? Save : Layers} loading={saving}>
+              {editingId ? "Save changes" : "Create method"}
             </Button>
+            {editingId && (
+              <Button type="button" variant="outline" fullWidth icon={X} onClick={cancelEdit}>
+                Cancel
+              </Button>
+            )}
           </form>
         </Card>
 
@@ -191,12 +274,16 @@ export default function AdminDepositMethodsPage() {
                     <span className={styles.rowName}>{m.name}</span>
                     <span className={styles.rowSub}>
                       {m.network} · {m.symbol} · {m.assetType} · {m.requiredConfirmations} conf
+                      {m.minAmount ? ` · min ${m.minAmount}` : ""}
                     </span>
                   </div>
                   <Badge variant={m.status === "active" ? "success" : "neutral"} size="sm">
                     {m.status}
                   </Badge>
                   <div className={styles.rowActions}>
+                    <Button variant="outline" size="sm" icon={Pencil} onClick={() => startEdit(m)}>
+                      Edit
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => toggle(m)}>
                       {m.status === "active" ? "Disable" : "Enable"}
                     </Button>

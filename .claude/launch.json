@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "elvoria-dev",
+      "autoPort": true,
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"]
+    },
+    {
+      "name": "elvoria-demo",
+      "autoPort": true,
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": {
+        "STORAGE_DIR": "C:/Users/M.3/AppData/Local/Temp/claude/F--Elvoria/181acb95-4c1c-405c-97d4-5578622625e1/scratchpad/demo-storage"
+      }
+    }
+  ]
+}

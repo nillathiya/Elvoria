@@ -39,6 +39,7 @@ test.after(async () => {
 });
 
 const USDT = "0x55d398326f99059ff775485246999027b3197955";
+const USDT_ETH = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 const OUR_ADDRESS = "0x1111111111111111111111111111111111111111";
 const OUTSIDE_ADDRESS = "0x9999999999999999999999999999999999999999";
 const SENDER = "0xabababababababababababababababababababab";
@@ -213,6 +214,52 @@ test("a transfer to an outside address is rejected", async () => {
 
     assert.equal(result.status, TX_STATUS.REJECTED);
     assert.equal(result.reason, REASONS.WRONG_RECIPIENT);
+  } finally {
+    restore();
+  }
+});
+
+// Spec §24 "Wrong network is rejected", §26.13. A hash is just 32 bytes — the
+// same string is a plausible hash on every EVM chain. What makes it valid here
+// is the chain the method names actually having it.
+test("wrong network is rejected, does not claim the hash, and the right one still verifies", async () => {
+  await deposits.createMethod({
+    id: "usdt_erc20",
+    name: "USDT ERC20",
+    network: "ETH",
+    assetType: "token",
+    symbol: "USDT",
+    contractAddress: USDT_ETH,
+    decimals: 6,
+    requiredConfirmations: 5,
+    verifier: "eth-token-verifier",
+  });
+  await deposits.addAddresses("usdt_erc20", OUR_ADDRESS);
+
+  // hash(0)-hash(9) are spoken for; this test verifies for real at the end, so
+  // it must own a hash no other test submits.
+  const h = hash(10);
+  // The transaction exists on BSC and nowhere else.
+  const restore = installFakeChain(
+    makeChain({ tip: 100, transactions: { [h]: goodTokenTx() }, host: "bsc-dataseed" })
+  );
+
+  try {
+    const wrong = await verifyTxHash({ peerId: peerA.id, methodId: "usdt_erc20", txHash: h });
+
+    assert.equal(wrong.status, TX_STATUS.REJECTED, "Ethereum has never heard of this hash");
+    assert.equal(wrong.reason, REASONS.TX_NOT_FOUND);
+
+    // §11: a wrong-network guess must not burn the hash on the chain it was
+    // wrongly submitted against...
+    assert.equal(await consumedTxHashRepository.isConsumed(`ETH:${h.slice(2)}`), false);
+
+    // ...and, the point of the test: the hash is still good on the network it
+    // really belongs to. A rejection here must not cost the real deposit.
+    const right = await verifyTxHash({ peerId: peerA.id, methodId: "usdt_bep20", txHash: h });
+
+    assert.equal(right.status, TX_STATUS.VERIFIED);
+    assert.equal(await consumedTxHashRepository.isConsumed(`BSC:${h.slice(2)}`), true);
   } finally {
     restore();
   }

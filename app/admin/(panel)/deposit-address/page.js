@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2, Wallet, X } from "lucide-react";
+import { Plus, Trash2, Wallet, X, Pencil } from "lucide-react";
 import Card from "../../../components/Card";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
@@ -21,6 +21,8 @@ export default function AdminDepositAddressPage() {
   const [drafts, setDrafts] = useState([""]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [editAddr, setEditAddr] = useState("");
 
   useEffect(() => {
     api
@@ -47,6 +49,7 @@ export default function AdminDepositAddressPage() {
   useEffect(() => {
     loadAddresses(methodId);
     setDrafts([""]);
+    setEditing(null);
   }, [methodId, loadAddresses]);
 
   const method = methods.find((m) => m.id === methodId);
@@ -70,6 +73,29 @@ export default function AdminDepositAddressPage() {
       showToast(err.message, "error");
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Spec §8 "edit address". The server refuses this once a deposit request has
+  // advertised the address or a transaction has landed on it — rewriting it
+  // then would point the record at a wallet the user was never shown. The
+  // ConflictError surfaces as a toast rather than being pre-empted here, so the
+  // check that matters stays the server's.
+  const saveEdit = async (addr) => {
+    const address = editAddr.trim();
+    if (!address) return showToast("Address cannot be empty", "error");
+    if (address === addr.address) {
+      setEditing(null);
+      return;
+    }
+    try {
+      await api.put(`/api/admin/deposit-addresses/${addr.id}`, { address });
+      showToast("Address updated");
+      setEditing(null);
+      setEditAddr("");
+      loadAddresses(methodId);
+    } catch (err) {
+      showToast(err.message, "error");
     }
   };
 
@@ -201,6 +227,17 @@ export default function AdminDepositAddressPage() {
                       </Badge>
                     </div>
                     <div className={styles.rowActions}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        icon={Pencil}
+                        onClick={() => {
+                          setEditing(editing === a.id ? null : a.id);
+                          setEditAddr(a.address);
+                        }}
+                      >
+                        Edit
+                      </Button>
                       <Button variant="outline" size="sm" onClick={() => toggle(a)}>
                         {a.status === "active" ? "Disable" : "Enable"}
                       </Button>
@@ -208,6 +245,18 @@ export default function AdminDepositAddressPage() {
                         Delete
                       </Button>
                     </div>
+
+                    {editing === a.id && (
+                      <div className={styles.editRow}>
+                        <Input
+                          label={`${method?.network ?? ""} receiving address`.trim()}
+                          value={editAddr}
+                          spellCheck={false}
+                          onChange={(e) => setEditAddr(e.target.value)}
+                        />
+                        <Button size="sm" onClick={() => saveEdit(a)}>Save</Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

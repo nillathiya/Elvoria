@@ -5,9 +5,15 @@
 //  be clicked through locally. This is a DEV TOOL, not application data — it
 //  lives in scripts/ and nothing in src imports it.
 //
-//  It deliberately does NOT create receiving addresses. An address seeded here
-//  would be one this script's author picked, not yours, and crypto sent to it
-//  is unrecoverable. Add your own via Admin -> Deposit address.
+//  It deliberately does NOT create receiving addresses by default. An address
+//  seeded here would be one this script's author picked, not yours, and crypto
+//  sent to it is unrecoverable. Add your own via Admin -> Deposit address.
+//
+//  --with-demo-address opts into seeding the BURN address against usdt_bep20,
+//  purely so the deposit flow is clickable end to end while learning the panel.
+//  It is the burn address on purpose: it is unmistakably not a wallet, so it
+//  cannot be quietly mistaken for a real one. Anything sent to it is destroyed.
+//  Never use that flag on an install that takes real deposits.
 // ============================================================
 
 import { createInterface } from "readline";
@@ -19,6 +25,11 @@ const PEERS = [
   { peerCode: "PEER002", name: "Peer Two", pin: "112233", status: "disabled" },
 ];
 const USER = { email: "demo@example.com", username: "demouser", password: "correct horse battery staple" };
+
+// Opt-in only — see the header. The burn address, chosen because it is
+// self-evidently not somebody's wallet.
+const WITH_DEMO_ADDRESS = process.argv.includes("--with-demo-address");
+const DEMO_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 // These PINs are published in this file, so anything seeded with them is
 // public knowledge. Refusing outright is safer than trusting an env var to be
@@ -33,7 +44,9 @@ const { setAdminPin, isAdminProvisioned, userRegister } = await import(
   "../lib/server/services/auth-service.js"
 );
 const { createPeer, listPeers } = await import("../lib/server/services/peer-service.js");
-const { createMethod, listMethods } = await import("../lib/server/services/deposit-service.js");
+const { createMethod, listMethods, addAddresses } = await import(
+  "../lib/server/services/deposit-service.js"
+);
 const { userRepository } = await import("../lib/server/repositories/user-repository.js");
 
 function ask(question) {
@@ -123,6 +136,18 @@ for (const method of METHODS) {
   }
 }
 
+// Only usdt_bep20 gets one, so bnb_native stays address-less on purpose: it is
+// the live demonstration that a method with no active address is never offered
+// to a user or a peer.
+if (WITH_DEMO_ADDRESS) {
+  try {
+    await addAddresses("usdt_bep20", [DEMO_ADDRESS]);
+    created.push(`Address         ${DEMO_ADDRESS}  (BURN ADDRESS — demo only)`);
+  } catch (err) {
+    console.log(`  skipped demo address: ${err.message}`);
+  }
+}
+
 if (!(await userRepository.findByEmail(USER.email))) {
   await userRegister(USER);
   created.push(`User            ${USER.email} / ${USER.password}`);
@@ -131,8 +156,19 @@ if (!(await userRepository.findByEmail(USER.email))) {
 console.log("\nSeeded:\n");
 created.forEach((line) => console.log(`  ${line}`));
 
-console.log(
-  "\nNext: sign in at /admin with the PIN above and add YOUR OWN receiving\n" +
-    "addresses under Deposit address. None are seeded on purpose — an address\n" +
-    "from a script is not your wallet, and crypto sent to it cannot be recovered.\n"
-);
+if (WITH_DEMO_ADDRESS) {
+  console.log(
+    "\n  WARNING: usdt_bep20 now points at the BURN address. This install can\n" +
+      "  demonstrate the deposit flow, but any real USDT sent to it is destroyed\n" +
+      "  forever. Replace it under Admin -> Deposit address before going near\n" +
+      "  real deposits.\n"
+  );
+} else {
+  console.log(
+    "\nNext: sign in at /admin with the PIN above and add YOUR OWN receiving\n" +
+      "addresses under Deposit address. None are seeded on purpose — an address\n" +
+      "from a script is not your wallet, and crypto sent to it cannot be recovered.\n" +
+      "\nTo click through the deposit flow with a throwaway address instead:\n" +
+      "  npm run seed-dev -- --with-demo-address\n"
+  );
+}

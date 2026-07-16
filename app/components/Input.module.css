@@ -57,9 +57,13 @@
   left: 46px;
 }
 
+/* The 52px control pads 18px down to the value's text box, which starts the
+   value at ~23px. A floated label has to clear that, so it sits at 8px and
+   ends by 21px — at 15px it printed through the value on every prefilled
+   field. */
 .input:focus + .floating,
 .input:not(:placeholder-shown) + .floating {
-  top: 15px;
+  top: 8px;
   transform: translateY(0);
   font-size: 11px;
   letter-spacing: 0.02em;
@@ -70,11 +74,11 @@
   color: var(--text-secondary);
 }
 
-/* Static label for selects (always floated) */
+/* Static label for selects (always floated — a select always has a value). */
 .floatingStatic {
   position: absolute;
   left: var(--space-lg);
-  top: 15px;
+  top: 8px;
   font-size: 11px;
   color: var(--text-secondary);
   pointer-events: none;

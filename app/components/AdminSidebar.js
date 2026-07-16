@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Wallet, CircleUser, LogOut, X, Users, Layers, Receipt } from "lucide-react";
+import { Wallet, CircleUser, LogOut, X, Users, UserRound, Layers, Receipt } from "lucide-react";
 import Logo from "./Logo";
 import { api } from "@/lib/api";
 import styles from "./Sidebar.module.css";
@@ -11,6 +11,7 @@ const cx = (...c) => c.filter(Boolean).join(" ");
 
 const ITEMS = [
   { href: "/admin/peers", label: "Peers", icon: Users },
+  { href: "/admin/users", label: "Users", icon: UserRound },
   { href: "/admin/deposit-methods", label: "Deposit methods", icon: Layers },
   { href: "/admin/deposit-address", label: "Deposit address", icon: Wallet },
   { href: "/admin/transactions", label: "Transactions", icon: Receipt },

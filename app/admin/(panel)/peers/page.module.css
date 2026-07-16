@@ -87,8 +87,9 @@
   flex: none;
 }
 
-/* Takes the full row width so the input never squeezes the buttons. */
-.resetRow {
+/* Inline edit/reset row. Takes the full row width so the input never
+   squeezes the buttons. */
+.inlineForm {
   flex-basis: 100%;
   display: flex;
   align-items: center;
@@ -96,7 +97,7 @@
   padding-top: 10px;
 }
 
-.resetRow > :first-child {
+.inlineForm > :first-child {
   flex: 1;
   min-width: 0;
 }
@@ -105,6 +106,34 @@
   color: var(--text-muted, #8a8f98);
   font-size: 14px;
   padding: 8px 4px;
+}
+
+/* A peer's own transactions, expanded under their row (spec §6). */
+.txPanel {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 8px;
+}
+
+.txRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* A TX hash is 66 chars and must not stretch the row on a phone. */
+.txHash {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 /* Transaction search filters (spec §20). */

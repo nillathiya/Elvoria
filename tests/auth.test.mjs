@@ -16,7 +16,12 @@ process.env.AUTH_PEPPER = "test-pepper-not-a-real-secret";
 const { ensureStorage } = await import("../lib/server/services/file-storage-service.js");
 const { hashSecret, verifySecret } = await import("../lib/server/utils/crypto-hash.js");
 const { peerRepository } = await import("../lib/server/repositories/peer-repository.js");
+const { userRepository } = await import("../lib/server/repositories/user-repository.js");
+const { depositRequestRepository } = await import(
+  "../lib/server/repositories/deposit-request-repository.js"
+);
 const auth = await import("../lib/server/services/auth-service.js");
+const { listUsers } = await import("../lib/server/services/user-service.js");
 const { clearFailures, attemptKey } = await import("../lib/server/services/rate-limit-service.js");
 
 await ensureStorage();
@@ -215,6 +220,51 @@ test("a wrong password fails and registration input is validated", async () => {
   );
   await assert.rejects(auth.userRegister({ email: "bad-email", username: "x1", password: "password123" }));
   await assert.rejects(auth.userRegister({ email: "ok@example.com", username: "x2", password: "short" }));
+});
+
+// ---- admin's view of users (spec §2.1) ---------------------
+
+test("the admin's user list never carries a password hash", async () => {
+  await auth.userRegister({ email: "listed@example.com", username: "listed", password: "password123" });
+
+  const users = await listUsers();
+  const listed = users.find((u) => u.username === "listed");
+
+  assert.ok(listed, "a registered user must appear in the admin's list");
+  assert.equal(listed.passwordHash, undefined, "never expose the password hash (§3.3)");
+
+  // Guards against a future field carrying the hash under another name: the
+  // serialized row must not contain the stored secret anywhere.
+  const stored = await userRepository.findByUsername("listed");
+  assert.ok(stored.passwordHash, "the hash is stored…");
+  assert.ok(
+    !JSON.stringify(users).includes(stored.passwordHash),
+    "…but must not appear anywhere in the response"
+  );
+});
+
+test("the admin's user list counts each user's deposit requests", async () => {
+  const user = await auth.userRegister({
+    email: "counted@example.com",
+    username: "counted",
+    password: "password123",
+  });
+
+  await depositRequestRepository.create({
+    userId: user.id,
+    methodId: "some_method",
+    assignedAddressId: "address_x",
+    assignedAddress: "0xabc",
+    status: "awaiting_txhash",
+  });
+
+  const users = await listUsers();
+  assert.equal(users.find((u) => u.id === user.id).depositRequests, 1);
+  assert.equal(
+    users.find((u) => u.username === "listed").depositRequests,
+    0,
+    "a user with no requests counts zero, not undefined"
+  );
 });
 
 // ---- brute force (spec §3.1, §21) --------------------------

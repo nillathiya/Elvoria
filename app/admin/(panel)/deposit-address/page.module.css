@@ -170,3 +170,18 @@
 .row .addr {
   overflow-wrap: anywhere;
 }
+
+/* Inline edit form. Spans the whole row so a full-length address has somewhere
+   to go without squeezing the Save button off the end. */
+.editRow {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.editRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}

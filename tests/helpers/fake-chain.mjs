@@ -23,8 +23,12 @@ export function transferLog({ contract, from, to, amount }) {
   };
 }
 
-export function makeChain({ tip = 100, transactions = {} } = {}) {
-  return { tip, transactions };
+// `host` scopes the transactions to ONE network's RPC endpoint. Other networks
+// still answer (their node is up) but have never heard of the hash — which is
+// exactly what a wrong-network submission looks like from the selected chain.
+// Omit it and every endpoint serves the same transactions.
+export function makeChain({ tip = 100, transactions = {}, host = null } = {}) {
+  return { tip, transactions, host };
 }
 
 // Installs the mock and returns a restore function.
@@ -41,17 +45,17 @@ export function installFakeChain(chain) {
       json: async () => ({ jsonrpc: "2.0", id: 1, result }),
     });
 
+    // Every node is reachable; only the one matching `host` holds the
+    // transactions. An outage is installDeadChain's job, not this.
+    const holdsTransactions = !chain.host || String(url).includes(chain.host);
+    const lookup = (key) =>
+      holdsTransactions ? chain.transactions[String(params[0]).toLowerCase()]?.[key] : null;
+
     if (method === "eth_blockNumber") return respond(toHex(chain.tip));
 
-    if (method === "eth_getTransactionByHash") {
-      const entry = chain.transactions[String(params[0]).toLowerCase()];
-      return respond(entry?.tx ?? null);
-    }
+    if (method === "eth_getTransactionByHash") return respond(lookup("tx") ?? null);
 
-    if (method === "eth_getTransactionReceipt") {
-      const entry = chain.transactions[String(params[0]).toLowerCase()];
-      return respond(entry?.receipt ?? null);
-    }
+    if (method === "eth_getTransactionReceipt") return respond(lookup("receipt") ?? null);
 
     if (method) return respond(null);
 
