@@ -73,7 +73,7 @@
 
 .rowName {
   font-weight: 600;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 .rowSub {
@@ -131,7 +131,7 @@
 .txHash {
   flex: 1;
   min-width: 0;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
   overflow-wrap: anywhere;
 }
@@ -148,4 +148,15 @@
   .filters {
     grid-template-columns: 1fr;
   }
+}
+
+/* Says why an "active" method is still invisible to users and peers. */
+.rowWarn {
+  font-size: 13px;
+  color: var(--warning, #b45309);
+}
+
+.rowWarn a {
+  color: inherit;
+  text-decoration: underline;
 }

@@ -107,7 +107,7 @@
   font-size: 14px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .pos {
   color: var(--success);

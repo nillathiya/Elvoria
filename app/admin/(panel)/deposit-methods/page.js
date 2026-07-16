@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { Layers, Plus, Pencil, X, Save } from "lucide-react";
 import Card from "../../../components/Card";
@@ -276,6 +277,25 @@ export default function AdminDepositMethodsPage() {
                       {m.network} · {m.symbol} · {m.assetType} · {m.requiredConfirmations} conf
                       {m.minAmount ? ` · min ${m.minAmount}` : ""}
                     </span>
+                    {/* "active" alone does not mean usable: a method with no
+                        active address is hidden from every user and peer, and
+                        reading "active" here while the peer panel says there is
+                        nothing available is just confusing. Say why. */}
+                    {m.status === "active" && m.activeAddressCount === 0 && (
+                      <span className={styles.rowWarn}>
+                        No active receiving address — hidden from users and peers.{" "}
+                        <Link href="/admin/deposit-address">Add one</Link>
+                      </span>
+                    )}
+                    {m.activeAddressCount > 0 && (
+                      <span className={styles.rowSub}>
+                        {m.activeAddressCount} active address
+                        {m.activeAddressCount > 1 ? "es" : ""}
+                        {m.addressCount > m.activeAddressCount
+                          ? ` · ${m.addressCount - m.activeAddressCount} disabled`
+                          : ""}
+                      </span>
+                    )}
                   </div>
                   <Badge variant={m.status === "active" ? "success" : "neutral"} size="sm">
                     {m.status}

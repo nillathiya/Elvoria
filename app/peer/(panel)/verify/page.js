@@ -124,9 +124,13 @@ export default function PeerVerifyPage() {
         </header>
 
         <form className={styles.form} onSubmit={submit}>
+          {/* A method is only listed once it has an active receiving address, so
+              "no methods are active" was the wrong reason to give — they may
+              well be active and simply have nowhere to receive. */}
           {!methods.length ? (
             <p className={styles.note}>
-              No deposit methods are active. An administrator must configure one first.
+              No deposit method has a receiving address configured yet, so there is nothing to
+              verify against. An administrator needs to add one.
             </p>
           ) : (
             <>

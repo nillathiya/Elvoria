@@ -156,8 +156,8 @@
 }
 
 .removeDraft:hover {
-  color: var(--danger, #ef4444);
-  border-color: var(--danger, #ef4444);
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .rowActions {

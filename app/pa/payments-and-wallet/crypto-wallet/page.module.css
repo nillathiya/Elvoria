@@ -195,7 +195,7 @@
 .addressText {
   flex: 1;
   min-width: 0;
-  font-family: var(--font-mono, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 13px;
   color: var(--text-primary);
   word-break: break-all;

@@ -146,7 +146,7 @@
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   color: var(--text-secondary);
 }
 .country {
@@ -191,7 +191,7 @@
   font-size: 13px;
   text-align: right;
   font-variant-numeric: tabular-nums;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .actual {
   font-weight: 600;

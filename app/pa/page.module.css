@@ -32,8 +32,10 @@
   height: 44px;
   flex: none;
   border-radius: 12px;
-  background: var(--accent-soft, rgba(68, 138, 255, 0.12));
-  color: var(--accent, #448aff);
+  /* --accent-soft never existed, so this fell through to a blue fallback while
+     the brand accent is yellow. --accent-muted is the real token. */
+  background: var(--accent-muted);
+  color: var(--accent);
 }
 
 .ctaBody {
