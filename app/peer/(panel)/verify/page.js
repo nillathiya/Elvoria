@@ -20,12 +20,26 @@ const RESULTS = {
   already_used: { tone: "warn", icon: AlertTriangle, title: "Transaction already used" },
   rejected: { tone: "bad", icon: XCircle, title: "Transaction rejected" },
   failed: { tone: "bad", icon: XCircle, title: "Verification failed" },
-  // "Rejected" is a verdict about the transaction. These are not: the chain was
-  // never asked. Saying "rejected" here would tell a peer their hash is bad
-  // when the real problem is on our side — and they might throw away a
-  // perfectly good hash because of it.
+  // "Rejected" is a verdict about the transaction. These two are not — the
+  // chain was never asked — but they are still different from each other, and
+  // conflating them gives the peer the wrong instruction:
+  //
+  //   bad_input   the hash itself is wrong. Fix it. Retrying changes nothing.
+  //   not_checked our side could not ask. The hash may be fine — keep it.
+  bad_input: { tone: "bad", icon: XCircle, title: "That is not a valid TX hash" },
   not_checked: { tone: "warn", icon: AlertTriangle, title: "Could not check this transaction" },
 };
+
+// Errors that mean "we could not ask the chain", as opposed to "your input is
+// wrong". Anything else that throws is treated as bad input.
+const NOT_OUR_FAULT = new Set([
+  "NO_ACTIVE_ADDRESS",
+  "BLOCKCHAIN_API_UNAVAILABLE",
+  "RATE_LIMITED",
+  "LOCK_TIMEOUT",
+  "INTERNAL_ERROR",
+  "STORAGE_CORRUPT",
+]);
 
 const REASON_TEXT = {
   TX_NOT_FOUND: "This transaction was not found on the blockchain. Check the hash and the network.",
@@ -83,7 +97,7 @@ export default function PeerVerifyPage() {
       // either could not reach the chain or never got as far as asking it. Only
       // a 200 response carries a real rejection.
       setResult({
-        status: err.code === "BLOCKCHAIN_API_UNAVAILABLE" ? "failed" : "not_checked",
+        status: NOT_OUR_FAULT.has(err.code) ? "not_checked" : "bad_input",
         reason: err.code,
         message: err.message,
       });
@@ -182,6 +196,14 @@ export default function PeerVerifyPage() {
               {(result.status === "rejected" || result.status === "failed") && (
                 <span className={styles.resultText}>
                   {REASON_TEXT[result.reason] ?? result.message ?? "This transaction was rejected."}
+                </span>
+              )}
+
+              {result.status === "bad_input" && (
+                <span className={styles.resultText}>
+                  {result.message} A TX hash is 64 hexadecimal characters, usually shown as
+                  0x followed by 64 characters. Copy it from the transaction in your wallet or on a
+                  block explorer.
                 </span>
               )}
 
