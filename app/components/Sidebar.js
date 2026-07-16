@@ -74,6 +74,8 @@ const NAV = [
       { href: "/pa/elvoria-benefits/vps", label: "Virtual Private Server" },
     ],
   },
+  { id: "copy", label: "Copy Trading", icon: Copy, href: "/pa/socialtrading" },
+  { id: "support", label: "Support hub", icon: LifeBuoy, href: "/pa/support_hub/help_center" },
 ];
 
 const cx = (...c) => c.filter(Boolean).join(" ");
