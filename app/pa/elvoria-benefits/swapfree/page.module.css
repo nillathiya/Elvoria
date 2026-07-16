@@ -1,0 +1,187 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin-top: 4px;
+  color: var(--text-secondary);
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+.sectionSub {
+  margin-top: 4px;
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xl);
+}
+.heroText {
+  flex: 1;
+  min-width: 0;
+}
+.heroTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.heroTitle {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.heroBody {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 60ch;
+}
+.heroControl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+.toggleLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Custom toggle switch */
+.toggle {
+  position: relative;
+  width: 56px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+}
+.toggleOn {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+.toggleOn .knob {
+  transform: translateX(26px);
+  background: var(--accent-contrast);
+}
+
+/* Benefits grid */
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+.benefitCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.benefitIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--accent-muted);
+  color: var(--accent);
+  margin-bottom: var(--space-xs);
+}
+.benefitTitle {
+  font-size: 15px;
+  font-weight: 600;
+}
+.benefitText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* Table card */
+.tableCard {
+  display: flex;
+  flex-direction: column;
+}
+.symbol {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.spread {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Note */
+.note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.noteIcon {
+  color: var(--info);
+  flex-shrink: 0;
+}
+.noteText {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+  .heroControl {
+    flex-direction: row;
+    align-self: flex-start;
+  }
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+}

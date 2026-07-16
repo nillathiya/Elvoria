@@ -64,6 +64,16 @@ const NAV = [
       { href: "/pa/economic-calendar", label: "Economic calendar" },
     ],
   },
+  {
+    id: "benefits",
+    label: "Elvoria benefits",
+    icon: Award,
+    children: [
+      { href: "/pa/elvoria-benefits/swapfree", label: "Trading conditions" },
+      { href: "/pa/elvoria-benefits/savings", label: "Savings" },
+      { href: "/pa/elvoria-benefits/vps", label: "Virtual Private Server" },
+    ],
+  },
 ];
 
 const cx = (...c) => c.filter(Boolean).join(" ");
