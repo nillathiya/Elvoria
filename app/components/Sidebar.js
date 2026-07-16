@@ -76,6 +76,16 @@ const NAV = [
   },
   { id: "copy", label: "Copy Trading", icon: Copy, href: "/pa/socialtrading" },
   { id: "support", label: "Support hub", icon: LifeBuoy, href: "/pa/support_hub/help_center" },
+  {
+    id: "profile",
+    label: "Profile",
+    icon: CircleUser,
+    children: [
+      { href: "/pa/settings/profile", label: "Verification" },
+      { href: "/pa/settings/security", label: "Security" },
+      { href: "/webtrading", label: "Trading Terminal", external: true, blank: true },
+    ],
+  },
 ];
 
 const cx = (...c) => c.filter(Boolean).join(" ");
