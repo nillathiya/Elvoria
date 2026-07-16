@@ -45,8 +45,13 @@ const NAV = [
     label: "Payments & wallet",
     icon: WalletCards,
     children: [
+      // Deposit and Withdrawal are the only entries here backed by the real
+      // API. The three below move demo balances around in memory.
       { href: "/pa/deposit", label: "Deposit" },
       { href: "/pa/withdraw", label: "Withdrawal" },
+      { href: "/pa/payments-and-wallet/transfer", label: "Transfer", badge: "New" },
+      { href: "/pa/payments-and-wallet/history", label: "Transaction history" },
+      { href: "/pa/payments-and-wallet/crypto-wallet", label: "Crypto wallet" },
     ],
   },
 ];
