@@ -153,9 +153,53 @@ test("a native method cannot carry a token contract", async () => {
 });
 
 test("the public method shape hides the internal verifier id", async () => {
-  const [method] = await deposits.listActiveMethodsPublic();
+  // Needs an active address, since a method without one is no longer offered.
+  // Uses bnb_native so the usdt_bep20 address counts asserted below stay put.
+  await deposits.addAddresses("bnb_native", "0x7777777777777777777777777777777777777777");
+
+  const method = (await deposits.listActiveMethodsPublic()).find((m) => m.id === "bnb_native");
+  assert.ok(method, "the method is offered once it has an address");
   assert.equal(method.verifier, undefined);
   assert.equal(method.contractAddress, undefined);
+});
+
+test("a method with no active address is not offered to users or peers", async () => {
+  await deposits.createMethod({
+    id: "unconfigured",
+    name: "Unconfigured",
+    network: "BSC",
+    assetType: "native",
+    symbol: "BNB",
+    requiredConfirmations: 1,
+    verifier: "bsc-native-verifier",
+  });
+
+  // Offering it would advertise a route that always 503s: the user picks it,
+  // the server has no address to assign, and they can do nothing about it.
+  const offered = await deposits.listActiveMethodsPublic();
+  assert.ok(
+    !offered.some((m) => m.id === "unconfigured"),
+    "a method with no receiving address must not be offered"
+  );
+
+  // The admin still sees it — they are the one who has to configure it.
+  const all = await deposits.listMethods();
+  assert.ok(all.some((m) => m.id === "unconfigured"), "the admin must still see it to fix it");
+});
+
+test("a method whose only address is disabled is not offered", async () => {
+  const [created] = await deposits.addAddresses(
+    "unconfigured",
+    "0x8888888888888888888888888888888888888888"
+  );
+  assert.ok((await deposits.listActiveMethodsPublic()).some((m) => m.id === "unconfigured"));
+
+  await deposits.setAddressStatus(created.id, "inactive");
+
+  assert.ok(
+    !(await deposits.listActiveMethodsPublic()).some((m) => m.id === "unconfigured"),
+    "disabling the last active address retires the method from the list"
+  );
 });
 
 // ---- addresses (spec §8, §24) ------------------------------
