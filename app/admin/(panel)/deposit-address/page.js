@@ -137,10 +137,25 @@ export default function AdminDepositAddressPage() {
 
             {drafts.map((value, i) => (
               <div key={i} className={styles.draftRow}>
+                {/* Input uses a floating label, so without one the field renders
+                    as an unmarked empty box and the placeholder stays hidden —
+                    which is no way to label the field that decides where real
+                    money lands. */}
                 <Input
+                  label={
+                    drafts.length > 1
+                      ? `${method?.network ?? ""} address ${i + 1}`.trim()
+                      : `${method?.network ?? ""} receiving address`.trim()
+                  }
                   value={value}
-                  placeholder={method?.network === "TRON" ? "T…" : "0x…"}
-                  helper={i === 0 ? `Network: ${method?.network}` : undefined}
+                  spellCheck={false}
+                  helper={
+                    i === 0
+                      ? `A ${method?.network} wallet you control. ${
+                          method?.network === "TRON" ? "Starts with T." : "Starts with 0x."
+                        }`
+                      : undefined
+                  }
                   onChange={(e) =>
                     setDrafts((d) => d.map((v, j) => (j === i ? e.target.value : v)))
                   }
