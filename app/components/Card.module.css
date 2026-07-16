@@ -16,11 +16,15 @@
   box-shadow: var(--shadow-card);
 }
 
+/* Every other variant reads its surface from a theme variable; this one had a
+   charcoal background and a white hairline border baked in. In the light theme
+   that produced a dark grey box with near-black text on it — the text was still
+   there, just invisible. It affected every page using variant="glass". */
 .glass {
-  background: rgba(21, 26, 33, 0.7);
+  background: var(--bg-glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
   box-shadow: var(--shadow-card);
 }
 

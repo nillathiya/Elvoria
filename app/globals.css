@@ -6,10 +6,15 @@
 
 :root,
 :root[data-theme="dark"] {
-  /* Backgrounds — neutral charcoal (Exness dark) */
+  /* Backgrounds — neutral charcoal */
   --bg-primary: #0c0d0f;
   --bg-card: #17181b;
   --bg-elevated: #1f2024;
+  /* Translucent surface for the frosted Card variant. It needs its own value
+     rather than --bg-card because the blur only reads as glass if the surface
+     is see-through. */
+  --bg-glass: rgba(21, 26, 33, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.06);
   --bg-input: #141517;
   --bg-hover: #25262b;
 
@@ -71,6 +76,8 @@
   --bg-primary: #ffffff;
   --bg-card: #ffffff;
   --bg-elevated: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.72);
+  --border-glass: rgba(16, 24, 40, 0.08);
   --bg-input: #f5f7fa;
   --bg-hover: #f2f4f7;
 
