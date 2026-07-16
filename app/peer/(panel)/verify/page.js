@@ -20,6 +20,11 @@ const RESULTS = {
   already_used: { tone: "warn", icon: AlertTriangle, title: "Transaction already used" },
   rejected: { tone: "bad", icon: XCircle, title: "Transaction rejected" },
   failed: { tone: "bad", icon: XCircle, title: "Verification failed" },
+  // "Rejected" is a verdict about the transaction. These are not: the chain was
+  // never asked. Saying "rejected" here would tell a peer their hash is bad
+  // when the real problem is on our side — and they might throw away a
+  // perfectly good hash because of it.
+  not_checked: { tone: "warn", icon: AlertTriangle, title: "Could not check this transaction" },
 };
 
 const REASON_TEXT = {
@@ -74,9 +79,14 @@ export default function PeerVerifyPage() {
       setResult(res);
       if (res.status === "verified") setTxHash("");
     } catch (err) {
-      // A 503 outage and a 400 bad hash both land here; both are shown as-is
-      // rather than being dressed up as a rejection.
-      setResult({ status: err.code === "BLOCKCHAIN_API_UNAVAILABLE" ? "failed" : "rejected", reason: err.code, message: err.message });
+      // Nothing that throws here is a verdict on the transaction — the server
+      // either could not reach the chain or never got as far as asking it. Only
+      // a 200 response carries a real rejection.
+      setResult({
+        status: err.code === "BLOCKCHAIN_API_UNAVAILABLE" ? "failed" : "not_checked",
+        reason: err.code,
+        message: err.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -172,6 +182,13 @@ export default function PeerVerifyPage() {
               {(result.status === "rejected" || result.status === "failed") && (
                 <span className={styles.resultText}>
                   {REASON_TEXT[result.reason] ?? result.message ?? "This transaction was rejected."}
+                </span>
+              )}
+
+              {result.status === "not_checked" && (
+                <span className={styles.resultText}>
+                  {result.message} Your TX hash has not been rejected — keep it and try again once
+                  this is resolved.
                 </span>
               )}
             </div>
