@@ -23,14 +23,26 @@ import Logo from "./Logo";
 import { useApp } from "../context/AppContext";
 import styles from "./Sidebar.module.css";
 
-// Spec §2.3: a normal user views deposit methods, selects one, receives an
-// address and submits transaction info. The old navigation advertised trading
-// accounts, performance, signals, news, VPS, savings and copy trading — none
-// of which exist in this product; every one was a page rendering mock data.
+// Navigation for the demo personal area.
+//
+// Everything under Trading renders invented data from lib/demoData — there is
+// no trading engine behind any of it. Deposit and Withdrawal are the exception:
+// those are wired to the real API.
 const NAV = [
   {
+    id: "trading",
+    label: "Trading",
+    icon: CandlestickChart,
+    children: [
+      { href: "/pa/trading/accounts", label: "Accounts" },
+      { href: "/pa/analytics", label: "Performance" },
+      { href: "/pa/transactions", label: "History of orders" },
+      { href: "/webtrading", label: "Elvoria terminal", external: true, blank: true },
+    ],
+  },
+  {
     id: "payments",
-    label: "Payments",
+    label: "Payments & wallet",
     icon: WalletCards,
     children: [
       { href: "/pa/deposit", label: "Deposit" },

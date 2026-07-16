@@ -8,13 +8,24 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import {
+  wallet as demoWallet,
+  accounts as demoAccounts,
+  transactions as demoTransactions,
+} from "@/lib/demoData";
 
 const AppContext = createContext(null);
 
-// UI state plus the signed-in user. Everything this context used to hold — a
-// seeded user, a wallet, trading accounts, a transaction list and the
-// deposit/withdraw mutations that moved fake balances around — was mock data
-// with no server behind it, so it is gone rather than reimplemented.
+// Two kinds of state live here, and they are deliberately not mixed:
+//
+//   user            REAL. Read from /api/user/me — an actual session.
+//   wallet/accounts/transactions
+//                   DEMO. Invented numbers from lib/demoData for the trading
+//                   pages to render. Nothing is behind them: they reset on
+//                   reload and no server has ever heard of them.
+//
+// The deposit flow does not read any of this — it goes to the API and verifies
+// against the blockchain.
 export function AppProvider({ children }) {
   // ---- Theme ----
   const [theme, setTheme] = useState("light");
@@ -67,6 +78,47 @@ export function AppProvider({ children }) {
     };
   }, []);
 
+  // ---- Demo trading state ----
+  //
+  // In memory only, on purpose. Persisting it would make invented balances look
+  // durable, and the next reader would have to work out whether they were real.
+  const [wallet, setWallet] = useState(demoWallet);
+  const [accounts, setAccounts] = useState(demoAccounts);
+  const [transactions, setTransactions] = useState(demoTransactions);
+
+  const addAccount = useCallback((partial) => {
+    const id = String(Math.floor(10000000 + Math.random() * 89999999));
+    const account = {
+      id,
+      equity: partial.mode === "Demo" ? 10000 : 0,
+      balance: partial.mode === "Demo" ? 10000 : 0,
+      server: partial.mode === "Demo" ? "Demo-3" : "Real-15",
+      created: "Jul 2025",
+      ...partial,
+    };
+    setAccounts((prev) => [account, ...prev]);
+    return account;
+  }, []);
+
+  const archiveAccount = useCallback((id) => {
+    setAccounts((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, mode: "Archived", balance: 0, equity: 0 } : a))
+    );
+  }, []);
+
+  const addTransaction = useCallback((tx) => {
+    setTransactions((prev) => [
+      { id: `TX${10022 + prev.length}`, date: "Jul 13, 2025", rawDate: "2025-07-13", status: "Pending", ...tx },
+      ...prev,
+    ]);
+  }, []);
+
+  // Sum of the demo "Real" account balances, shown in the header.
+  const totalRealBalance = useMemo(
+    () => accounts.filter((a) => a.mode === "Real").reduce((sum, a) => sum + a.balance, 0),
+    [accounts]
+  );
+
   // ---- Toasts ----
   const [toasts, setToasts] = useState([]);
   const showToast = useCallback((message, tone = "success") => {
@@ -83,13 +135,39 @@ export function AppProvider({ children }) {
       toggleTheme,
       collapsed,
       toggleCollapsed,
+      // real
       user,
       userLoading,
       setUser,
+      // demo
+      wallet,
+      accounts,
+      transactions,
+      totalRealBalance,
+      addAccount,
+      archiveAccount,
+      addTransaction,
+      // ui
       toasts,
       showToast,
     }),
-    [theme, toggleTheme, collapsed, toggleCollapsed, user, userLoading, toasts, showToast]
+    [
+      theme,
+      toggleTheme,
+      collapsed,
+      toggleCollapsed,
+      user,
+      userLoading,
+      wallet,
+      accounts,
+      transactions,
+      totalRealBalance,
+      addAccount,
+      archiveAccount,
+      addTransaction,
+      toasts,
+      showToast,
+    ]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
