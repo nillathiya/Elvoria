@@ -190,6 +190,13 @@ export default function SecurityPage() {
       {/* Active sessions */}
       <Card className={styles.section}>
         <h3 className={styles.sectionTitle}>Active sessions</h3>
+
+        {!securitySessions.length && (
+          <p className={styles.emptyNote}>
+            Per-device session history is not tracked, so there is nothing to list here.
+          </p>
+        )}
+
         <div className={styles.sessionList}>
           {securitySessions.map((s) => (
             <div key={s.id} className={styles.sessionRow}>

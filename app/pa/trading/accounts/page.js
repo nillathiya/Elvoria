@@ -21,11 +21,6 @@ import {
   ArrowUpDown,
   List,
   LayoutGrid,
-  Handshake,
-  Link2,
-  UserPlus,
-  Wallet,
-  ArrowRight,
 } from "lucide-react";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
@@ -73,7 +68,6 @@ export default function AccountsPage() {
   const [step, setStep] = useState(0);
   const [newAcct, setNewAcct] = useState(DEFAULT_ACCT);
   const [openMenu, setOpenMenu] = useState(null);
-  const [partnerOpen, setPartnerOpen] = useState(false);
   const menuRef = useRef(null);
   const sortRef = useRef(null);
 
@@ -127,16 +121,11 @@ export default function AccountsPage() {
 
   return (
     <div className={`${styles.page} animate-in`}>
-      {/* Become a partner banner (opens the "how it works" popup) */}
-      <button className={styles.partner} onClick={() => setPartnerOpen(true)}>
-        <div className={styles.partnerText}>
-          <span className={styles.partnerTitle}>Become a partner</span>
-          <span className={styles.partnerSub}>Invite a friend and earn up to 40% of our revenue</span>
-        </div>
-        <span className={styles.partnerArt} aria-hidden="true">
-          <Handshake size={54} strokeWidth={1.4} />
-        </span>
-      </button>
+      {/* The partner banner promised "up to 40% of our revenue" for inviting a
+          friend. There is no partner programme, no referral tracking and no
+          payout behind it — an earnings offer with nothing under it, on the
+          page a new user lands on. The same promise was already removed from
+          the sidebar for the same reason. */}
 
       {/* Header */}
       <header className={styles.head}>
@@ -383,56 +372,6 @@ export default function AccountsPage() {
         )}
       </Modal>
 
-      {/* Become a partner — how it works popup */}
-      <Modal
-        open={partnerOpen}
-        onClose={() => setPartnerOpen(false)}
-        title="Become a partner, start earning"
-      >
-        <div className={styles.partnerModal}>
-          <div className={styles.partnerHero}>
-            <span className={styles.partnerHeroBadge}>Up to 40%</span>
-            <span className={styles.partnerHeroText}>revenue share</span>
-          </div>
-
-          <p className={styles.partnerHow}>How it works?</p>
-
-          <div className={styles.partnerSteps}>
-            {[
-              { icon: Link2, label: "Share your link with your network" },
-              { icon: UserPlus, label: "Users register and trade" },
-              { icon: Wallet, label: "You qualify for commissions when they trade" },
-            ].map((s, i) => (
-              <div key={i} className={styles.partnerStepWrap}>
-                <div className={styles.partnerStep}>
-                  <span className={styles.partnerStepIcon}>
-                    <s.icon size={26} />
-                  </span>
-                  <span className={styles.partnerStepLabel}>{s.label}</span>
-                </div>
-                {i < 2 && <ArrowRight size={18} className={styles.partnerStepArrow} />}
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.partnerActions}>
-            <Button
-              onClick={() => {
-                setPartnerOpen(false);
-                showToast("Opening partnership program…");
-              }}
-            >
-              Become a partner
-            </Button>
-            <button
-              className={styles.partnerReadMore}
-              onClick={() => showToast("Loading partnership details…", "info")}
-            >
-              Read more
-            </button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

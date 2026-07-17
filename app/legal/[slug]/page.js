@@ -10,13 +10,21 @@ export function generateStaticParams() {
   return LEGAL_ORDER.map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }) {
-  const doc = getLegalDoc(params.slug);
+// params is a Promise since Next 15. Reading .slug off it without awaiting
+// gave undefined, so getLegalDoc found nothing and every legal page 404'd —
+// all twelve of them, including the ones the footer links to on every screen.
+// The API routes were handled at the Next 16 upgrade; this page was not,
+// because only the API was tested.
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const doc = getLegalDoc(slug);
   return { title: doc ? `${doc.title} — ${BRAND}` : `Not found — ${BRAND}` };
 }
 
-export default function LegalPage({ params }) {
-  const doc = getLegalDoc(params.slug);
+export default async function LegalPage({ params }) {
+  const { slug } = await params;
+
+  const doc = getLegalDoc(slug);
   if (!doc) notFound();
 
   const links = legalLinks();
@@ -66,7 +74,7 @@ export default function LegalPage({ params }) {
               <Link
                 key={l.slug}
                 href={`/legal/${l.slug}`}
-                className={[styles.sideLink, l.slug === params.slug ? styles.sideLinkActive : ""]
+                className={[styles.sideLink, l.slug === slug ? styles.sideLinkActive : ""]
                   .filter(Boolean)
                   .join(" ")}
               >

@@ -248,3 +248,8 @@
     justify-content: stretch;
   }
 }
+
+.emptyNote {
+  color: var(--text-secondary);
+  font-size: 14px;
+}

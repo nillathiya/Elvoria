@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BadgeCheck,
   Mail,
   Phone,
   Fingerprint,
@@ -38,6 +37,12 @@ export default function ProfilePage() {
     name: sessionUser?.username ?? demoUser.name,
     email: sessionUser?.email ?? demoUser.email,
     initials: (sessionUser?.username ?? demoUser.name).slice(0, 2).toUpperCase(),
+    // The account id and join date are real — they were showing a stranger's
+    // client number and a 2023 join date to someone who signed up today.
+    clientId: sessionUser?.id ?? demoUser.clientId,
+    memberSince: sessionUser?.createdAt
+      ? new Date(sessionUser.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      : demoUser.memberSince,
   };
 
   // The details table is driven by its own list, so it needs the same
@@ -69,11 +74,10 @@ export default function ProfilePage() {
       <Card variant="glass" className={styles.summary}>
         <div className={styles.avatar}>{user.initials}</div>
         <div className={styles.summaryInfo}>
+          {/* The "Gold" badge was awarded by nobody: there is no tier system,
+              no criteria and nothing that could change it. */}
           <div className={styles.nameRow}>
             <h2 className={styles.name}>{user.name}</h2>
-            <Badge variant="warning" icon={BadgeCheck}>
-              {user.tier}
-            </Badge>
           </div>
           <p className={styles.email}>{user.email}</p>
           <div className={styles.metaRow}>
@@ -173,17 +177,20 @@ export default function ProfilePage() {
         <p className={styles.sectionSub}>
           Upload clear, valid and unexpired documents to complete verification.
         </p>
+        {/* These badges were hardcoded to Verified and Pending while the
+            checklist above says 0/4 — the same page contradicting itself about
+            whether the user had submitted anything. */}
         <div className={styles.docGrid}>
           <DropZone
             title="Proof of identity"
             hint="Passport, ID card or driver's license"
-            status={<Badge variant="success" icon={Check}>Verified</Badge>}
+            status={<Badge variant="neutral">Not uploaded</Badge>}
             onUpload={() => showToast("Document uploaded")}
           />
           <DropZone
             title="Proof of address"
             hint="Utility bill or bank statement (last 3 months)"
-            status={<Badge variant="warning" icon={Clock}>Pending</Badge>}
+            status={<Badge variant="neutral">Not uploaded</Badge>}
             onUpload={() => showToast("Document uploaded")}
           />
         </div>
