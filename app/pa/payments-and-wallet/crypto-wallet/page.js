@@ -24,10 +24,12 @@ const coinColors = {
   ETH: "#627eea",
 };
 
+// The rows stay so the panel still lists the supported assets — at zero, which
+// is what a new account actually holds.
 const assets = [
-  { sym: "BTC", name: "Bitcoin", balance: 0.0642, usd: 3730.11, change: +2.4 },
-  { sym: "USDT", name: "Tether", balance: 412.0, usd: 412.0, change: 0.0 },
-  { sym: "ETH", name: "Ethereum", balance: 0.011, usd: 40.44, change: -1.1 },
+  { sym: "BTC", name: "Bitcoin", balance: 0, usd: 0, change: 0 },
+  { sym: "USDT", name: "Tether", balance: 0, usd: 0, change: 0 },
+  { sym: "ETH", name: "Ethereum", balance: 0, usd: 0, change: 0 },
 ];
 
 // Burn addresses, on purpose.
@@ -53,12 +55,8 @@ const networks = [
   { value: "eth", label: "Ethereum", min: "0.005 ETH", address: "0x000000000000000000000000000000000000dEaD" },
 ];
 
-const recentTx = [
-  { id: "cx1", sym: "BTC", type: "Deposit", amount: "+0.0120 BTC", status: "Completed", time: "2 hours ago" },
-  { id: "cx2", sym: "USDT", type: "Withdraw", amount: "-150.00 USDT", status: "Pending", time: "Yesterday" },
-  { id: "cx3", sym: "ETH", type: "Deposit", amount: "+0.0050 ETH", status: "Completed", time: "3 days ago" },
-  { id: "cx4", sym: "USDT", type: "Deposit", amount: "+412.00 USDT", status: "Completed", time: "Jul 05" },
-];
+// A new account has no history.
+const recentTx = [];
 
 const totalCryptoUsd = assets.reduce((sum, a) => sum + a.usd, 0);
 

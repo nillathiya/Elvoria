@@ -45,6 +45,13 @@ export default function TradingSignalsPage() {
         ))}
       </div>
 
+      {/* Otherwise the filters sit above blank space, which reads as broken. */}
+      {!signals.length && (
+        <Card>
+          <p className={styles.empty}>No trading signals are available right now.</p>
+        </Card>
+      )}
+
       <section className={`${styles.grid} stagger`}>
         {signals.map((s) => {
           const isBuy = s.side === "Buy";

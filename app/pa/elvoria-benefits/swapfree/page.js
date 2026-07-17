@@ -122,7 +122,11 @@ export default function SwapFreePage() {
         <p className={styles.sectionSub}>
           The following markets are available for swap-free trading on your account.
         </p>
-        <Table columns={columns} data={swapFreeInstruments} />
+        <Table
+          columns={columns}
+          data={swapFreeInstruments}
+          emptyMessage="No swap-free instruments are listed yet"
+        />
       </Card>
 
       <Card variant="outlined" className={styles.note}>

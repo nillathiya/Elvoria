@@ -153,7 +153,11 @@ export default function PaymentsHistoryPage() {
           sortKey={sortKey}
           sortDir={sortDir}
           onSort={onSort}
-          emptyMessage="No transactions match your filters"
+          emptyMessage={
+            transactions.length
+              ? "No transactions match your filters"
+              : "No transactions yet"
+          }
         />
 
         {totalPages > 1 && (

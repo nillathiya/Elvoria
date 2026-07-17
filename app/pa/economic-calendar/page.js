@@ -90,7 +90,11 @@ export default function EconomicCalendarPage() {
           </div>
 
           {rows.length === 0 && (
-            <div className={styles.empty}>No events match your filters</div>
+            <div className={styles.empty}>
+              {economicEvents.length
+                ? "No events match your filters"
+                : "No economic events scheduled"}
+            </div>
           )}
 
           {rows.map((e) => (

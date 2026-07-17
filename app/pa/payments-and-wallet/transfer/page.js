@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useMemo } from "react";
 import { ArrowUpDown, ArrowRight, Zap, ShieldCheck } from "lucide-react";
 import Card from "@/app/components/Card";
@@ -63,6 +64,29 @@ export default function TransferPage() {
       setAmount("");
     }, 900);
   };
+
+  // A transfer needs two accounts to move funds between. With none, `from` and
+  // `to` were undefined and the summary rendered "#undefined" — the form was
+  // offering a transfer that could not exist.
+  if (transferable.length < 2) {
+    return (
+      <div className={`${styles.page} animate-in`}>
+        <header className={styles.head}>
+          <div>
+            <h1 className={styles.title}>Transfer</h1>
+            <p className={styles.sub}>Move funds between your accounts instantly</p>
+          </div>
+        </header>
+
+        <Card>
+          <p className={styles.emptyNote}>
+            You need at least two accounts to transfer between them.{" "}
+            <Link href="/pa/trading/accounts">Open an account</Link> to get started.
+          </p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className={`${styles.page} animate-in`}>

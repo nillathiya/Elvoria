@@ -214,3 +214,12 @@
     width: 100%;
   }
 }
+
+.emptyNote {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.emptyNote a {
+  color: var(--accent);
+}

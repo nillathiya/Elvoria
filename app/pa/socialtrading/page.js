@@ -31,8 +31,10 @@ export default function CopyTradingPage() {
 
   const stats = useMemo(() => {
     const total = copyStrategies.length;
-    const avgReturn =
-      copyStrategies.reduce((sum, s) => sum + s.return, 0) / total;
+    // With no strategies this was 0/0, which renders as "+NaN%".
+    const avgReturn = total
+      ? copyStrategies.reduce((sum, s) => sum + s.return, 0) / total
+      : 0;
     const totalCopiers = copyStrategies.reduce((sum, s) => sum + s.copiers, 0);
     return { total, avgReturn, totalCopiers };
   }, []);
@@ -110,6 +112,16 @@ export default function CopyTradingPage() {
           ))}
         </div>
       </div>
+
+      {/* With nothing to list, the grid rendered as blank space under the
+          filters, which reads as a broken page rather than an empty one. */}
+      {!strategies.length && (
+        <Card>
+          <p className={styles.empty}>
+            No strategies are available to copy yet.
+          </p>
+        </Card>
+      )}
 
       {/* Strategy grid */}
       <section className={`${styles.grid} stagger`}>

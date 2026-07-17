@@ -226,7 +226,13 @@ export default function OrdersHistoryPage() {
           sortKey={sortKey}
           sortDir={sortDir}
           onSort={onSort}
-          emptyMessage="No orders match your filters"
+          // Blaming the filters when there is nothing to filter sends the user
+          // hunting through dropdowns for orders that do not exist.
+          emptyMessage={
+            closedOrders.length
+              ? "No orders match your filters"
+              : "No closed orders yet"
+          }
         />
 
         {totalPages > 1 && (
