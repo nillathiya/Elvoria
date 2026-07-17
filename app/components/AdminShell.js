@@ -22,7 +22,9 @@ export default function AdminShell({ children }) {
           <Header onMenuClick={() => setMenuOpen(true)} />
           <div className={styles.content}>
             {children}
-            <Footer />
+            {/* Copyright only — the deposit disclaimers are aimed at someone
+                sending funds, not at the operator configuring where they land. */}
+            <Footer minimal />
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default async function LegalPage({ params }) {
           <Link href="/pa" className={styles.brand}>
             <Logo variant="mark" size={36} />
           </Link>
-          <Link href="/pa" className={styles.back}>
+          <Link href="/admin" className={styles.back}>
             <ArrowLeft size={16} /> Back to Personal area
           </Link>
         </div>

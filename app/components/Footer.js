@@ -6,8 +6,22 @@ import { legalLinks } from "@/lib/legalDocs";
 import styles from "./Footer.module.css";
 
 // Site footer: legal disclaimer + links to the /legal/[slug] pages.
-export default function Footer() {
+//
+// `minimal` drops both and keeps only the copyright line. The admin panel uses
+// it: the disclaimers speak to someone about to deposit ("send only the named
+// asset… anything else may be permanently lost"), which is not what an
+// operator configuring the system is doing. The client area keeps them, since
+// that is where a person actually sends funds.
+export default function Footer({ minimal = false }) {
   const links = legalLinks();
+
+  if (minimal) {
+    return (
+      <footer className={styles.footer}>
+        <div className={styles.copy}>© 2008 – 2026. {BRAND}</div>
+      </footer>
+    );
+  }
 
   return (
     <footer className={styles.footer}>
