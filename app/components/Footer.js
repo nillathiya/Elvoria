@@ -17,7 +17,7 @@ export default function Footer({ minimal = false }) {
 
   if (minimal) {
     return (
-      <footer className={styles.footer}>
+      <footer className={`${styles.footer} ${styles.minimal}`}>
         <div className={styles.copy}>© 2008 – 2026. {BRAND}</div>
       </footer>
     );

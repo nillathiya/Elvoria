@@ -7,6 +7,14 @@
   border-top: 1px solid var(--border);
 }
 
+/* The two columns above exist to sit the disclaimers beside the legal index.
+   The minimal footer has neither — just the copyright — so the grid left it
+   pinned to the start of a column it had no reason to be in. */
+.minimal {
+  display: block;
+  text-align: center;
+}
+
 .legal {
   display: flex;
   flex-direction: column;
