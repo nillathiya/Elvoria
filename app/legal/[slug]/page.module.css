@@ -28,7 +28,14 @@
   display: flex;
   align-items: center;
 }
+/* Now a <button> (it calls history.back()), so the browser's default button
+   chrome has to be cleared — otherwise it renders with a border and a grey
+   face where a link used to be. */
 .back {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 7px;

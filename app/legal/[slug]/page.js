@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import BackLink from "../../components/BackLink";
 import { notFound } from "next/navigation";
 import Logo from "../../components/Logo";
 import { getLegalDoc, LEGAL_ORDER, legalLinks } from "@/lib/legalDocs";
@@ -36,9 +36,11 @@ export default async function LegalPage({ params }) {
           <Link href="/pa" className={styles.brand}>
             <Logo variant="mark" size={36} />
           </Link>
-          <Link href="/admin" className={styles.back}>
-            <ArrowLeft size={16} /> Back to Personal area
-          </Link>
+          {/* Was a fixed href to /admin, labelled "Back to Personal area" — it
+              said one place and went to another. These pages are reached from
+              the client area, from the admin panel and from bare links, so it
+              goes back to wherever the reader actually came from. */}
+          <BackLink className={styles.back} />
         </div>
       </header>
 
