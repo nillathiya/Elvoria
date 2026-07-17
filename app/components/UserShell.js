@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Footer from "./Footer";
 import Button from "./Button";
+import VerifyContactModal from "./VerifyContactModal";
 import { useApp } from "../context/AppContext";
 import styles from "../pa/layout.module.css";
 
@@ -17,6 +18,7 @@ import styles from "../pa/layout.module.css";
 // deposit page, so nothing else in the UI actually worked.
 export default function UserShell({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [verifyOpen, setVerifyOpen] = useState(false);
   const router = useRouter();
   const { collapsed, toasts } = useApp();
 
@@ -45,7 +47,7 @@ export default function UserShell({ children }) {
               >
                 Learn more
               </Button>
-              <Button size="sm" onClick={() => router.push("/pa/settings")}>
+              <Button size="sm" onClick={() => setVerifyOpen(true)}>
                 Complete
               </Button>
             </div>
@@ -57,6 +59,8 @@ export default function UserShell({ children }) {
           <Footer />
         </div>
       </div>
+
+      <VerifyContactModal open={verifyOpen} onClose={() => setVerifyOpen(false)} />
 
       {toasts.length > 0 && (
         <div className="toast-container" translate="no">
