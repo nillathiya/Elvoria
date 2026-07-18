@@ -64,7 +64,7 @@ const CRYPTO_IDS = ["bitcoin", "ethereum", "solana", "ripple", "cardano"];
 const STATS = [
   { value: "$4.2T+", label: "Indicative monthly volume" },
   { value: "180+", label: "Countries served" },
-  { value: "0.0 pips", label: "Spreads from" },
+  { value: "0.3 pips", label: "Spreads from" },
   { value: "24/7", label: "Withdrawals & support" },
 ];
 
