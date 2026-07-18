@@ -85,6 +85,24 @@
   display: flex;
   gap: 8px;
   flex: none;
+  flex-wrap: wrap;
+}
+
+/* On a phone the four action buttons can't sit beside the peer's name, so they
+   drop to their own full-width line as a 2×2 grid instead of overflowing. */
+@media (max-width: 640px) {
+  .rowMain {
+    min-width: 0;
+  }
+  .rowActions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .rowActions > * {
+    width: 100%;
+  }
 }
 
 /* Inline edit/reset row. Takes the full row width so the input never
