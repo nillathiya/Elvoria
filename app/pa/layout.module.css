@@ -59,6 +59,115 @@
   flex-shrink: 0;
 }
 
+/* ---------- First-deposit offer bar ---------- */
+.offerBar {
+  width: 100%;
+  background: #fdf6e6;
+  border-bottom: 1px solid #f2e9cf;
+}
+:global(:root[data-theme="dark"]) .offerBar {
+  background: color-mix(in srgb, var(--accent) 9%, var(--bg-card));
+  border-bottom-color: var(--border);
+}
+.offerInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  width: 100%;
+  padding: 12px var(--space-2xl);
+}
+.offerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ece0c2;
+  color: #b8860b;
+}
+:global(:root[data-theme="dark"]) .offerIcon {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+  color: var(--accent);
+}
+.offerText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.offerTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c2618;
+}
+:global(:root[data-theme="dark"]) .offerTitle {
+  color: var(--text-primary);
+}
+.offerTiers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.offerTier {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid #ece0c2;
+  font-size: 12px;
+  white-space: nowrap;
+}
+:global(:root[data-theme="dark"]) .offerTier {
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+.offerTierAmt {
+  font-weight: 600;
+  color: #2c2618;
+}
+:global(:root[data-theme="dark"]) .offerTierAmt {
+  color: var(--text-primary);
+}
+.offerTierPct {
+  font-weight: 700;
+  color: #b8860b;
+}
+:global(:root[data-theme="dark"]) .offerTierPct {
+  color: var(--accent);
+}
+.offerActions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+.offerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  color: #7a6a3a;
+}
+.offerClose:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+:global(:root[data-theme="dark"]) .offerClose {
+  color: var(--text-secondary);
+}
+:global(:root[data-theme="dark"]) .offerClose:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
 .content {
   position: relative;
   z-index: 1;
@@ -77,6 +186,25 @@
   }
   .profileText {
     font-size: 14px;
+  }
+  .offerInner {
+    padding: 12px var(--space-lg);
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .offerTitle {
+    font-size: 14px;
+  }
+  /* Keep the close button in the top corner while the row wraps. */
+  .offerClose {
+    order: -1;
+    margin-left: auto;
+  }
+  .offerActions {
+    flex-basis: 100%;
+  }
+  .offerActions :global(button) {
+    width: 100%;
   }
 }
 

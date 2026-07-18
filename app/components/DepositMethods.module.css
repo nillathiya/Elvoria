@@ -37,6 +37,187 @@
   text-decoration: underline;
 }
 
+/* ---------- First-deposit bonus calculator ---------- */
+.calc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+.calc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(420px circle at 100% 0%, var(--accent-muted), transparent 60%);
+}
+.calcHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  position: relative;
+}
+.calcIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+.calcTitle {
+  font-size: 17px;
+  font-weight: 700;
+}
+.calcSub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.calcField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+.calcLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.calcInputWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px var(--space-lg);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+.calcInputWrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-muted);
+}
+.calcCurrency {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.calcInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  position: relative;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.chip:hover {
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+.chipActive {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  color: var(--text-primary);
+}
+.chipPct {
+  color: var(--accent);
+  font-weight: 700;
+}
+:global(:root[data-theme="light"]) .chipPct {
+  color: #b8860b;
+}
+.calcResult {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  position: relative;
+}
+.calcCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.calcTotal {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+.calcCellLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.calcCellValue {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.bonusValue {
+  color: var(--accent);
+  font-size: 15px;
+}
+:global(:root[data-theme="light"]) .bonusValue {
+  color: #b8860b;
+}
+.calcWarn {
+  position: relative;
+  padding: 10px var(--space-lg);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+  color: var(--warning);
+  font-size: 13px;
+  font-weight: 500;
+}
+.calcNote {
+  position: relative;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
 /* ---------- Section ---------- */
 .section {
   display: flex;
@@ -107,6 +288,18 @@
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+.metaStrong {
+  font-size: 13.5px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.metaMuted {
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .go {
@@ -185,6 +378,51 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+/* Amount-to-send box inside the deposit modal. */
+.sendBox {
+  width: 100%;
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--accent-muted);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.sendLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.sendAmount {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+.sendSub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.sendBonus {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+:global(:root[data-theme="light"]) .sendBonus {
+  color: #b8860b;
+}
+
 .qrBox {
   margin: var(--space-md) 0;
   width: 220px;
@@ -269,6 +507,11 @@
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 560px) {
+  .calcResult {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 480px) {
   .method {
     padding: var(--space-lg);
@@ -276,6 +519,9 @@
   }
   .modal {
     padding: var(--space-xl);
+  }
+  .calc {
+    padding: var(--space-lg);
   }
 }
 
