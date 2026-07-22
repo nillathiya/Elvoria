@@ -41,7 +41,8 @@ import {
   X,
 } from "lucide-react";
 import Logo from "./components/Logo";
-import { BRAND } from "@/lib/config";
+import WhatsAppIcon from "./components/WhatsAppIcon";
+import { BRAND, SUPPORT_EMAIL, SUPPORT_WHATSAPP_DISPLAY, whatsappHref } from "@/lib/config";
 import { legalLinks } from "@/lib/legalDocs";
 import styles from "./page.module.css";
 
@@ -622,6 +623,20 @@ export default function LandingPage() {
               {BRAND} is a demonstration multi-asset trading interface. It is not a licensed
               financial services provider and is not affiliated with any real brokerage.
             </p>
+            <a
+              className={styles.footerWa}
+              href={whatsappHref("Hi Elvoria, I have a question.")}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppIcon size={16} /> Chat on WhatsApp
+            </a>
+            <div className={styles.footerContact}>
+              {SUPPORT_WHATSAPP_DISPLAY} ·{" "}
+              <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.footerLink}>
+                {SUPPORT_EMAIL}
+              </a>
+            </div>
             <div className={styles.footerLang}>
               <Globe size={15} /> English
             </div>

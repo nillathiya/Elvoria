@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { api } from "@/lib/api";
+import { whatsappHref, SUPPORT_EMAIL } from "@/lib/config";
 import { LANGUAGES, getLangCode, setLangCode } from "./GoogleTranslate";
 import styles from "./Header.module.css";
 
@@ -28,6 +29,18 @@ import styles from "./Header.module.css";
 // no longer exists. Only the legal documents are real, so only they remain.
 const HELP_COLUMNS = [
   [
+    {
+      title: "Support",
+      items: [
+        {
+          label: "Chat on WhatsApp",
+          href: whatsappHref("Hi Elvoria, I need help with my account."),
+          blank: true,
+        },
+        { label: "Help center", href: "/pa/support_hub/help_center" },
+        { label: `Email ${SUPPORT_EMAIL}`, href: `mailto:${SUPPORT_EMAIL}` },
+      ],
+    },
     {
       title: "Legal",
       items: [

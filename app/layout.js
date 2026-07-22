@@ -4,6 +4,7 @@ import { AppProvider } from "./context/AppContext";
 import GoogleTranslate from "./components/GoogleTranslate";
 import PWARegister from "./components/PWARegister";
 import InstallPWA from "./components/InstallPWA";
+import WhatsAppFab from "./components/WhatsAppFab";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
         <AppProvider>{children}</AppProvider>
         <PWARegister />
         <InstallPWA />
+        <WhatsAppFab />
       </body>
     </html>
   );

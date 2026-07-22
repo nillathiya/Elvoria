@@ -10,15 +10,16 @@ import {
   ShieldCheck,
   Users,
   ChevronDown,
-  MessageCircle,
   Mail,
   LifeBuoy,
 } from "lucide-react";
 import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
+import WhatsAppIcon from "@/app/components/WhatsAppIcon";
 import { useApp } from "@/app/context/AppContext";
 import { helpCategories, helpFaqs } from "@/lib/demoData";
+import { whatsappHref, SUPPORT_EMAIL, SUPPORT_WHATSAPP_DISPLAY } from "@/lib/config";
 import styles from "./page.module.css";
 
 const CATEGORY_ICONS = {
@@ -141,17 +142,28 @@ export default function HelpCenterPage() {
         <div className={styles.ctaText}>
           <h2 className={styles.ctaTitle}>Still need help?</h2>
           <p className={styles.ctaSub}>
-            Our support team is available 24/7 to assist you with any question.
+            Our support team is available 24/7 on WhatsApp at {SUPPORT_WHATSAPP_DISPLAY}.
           </p>
         </div>
         <div className={styles.ctaActions}>
-          <Button icon={MessageCircle} onClick={() => showToast("Starting live chat")}>
-            Live chat
+          <Button
+            icon={WhatsAppIcon}
+            onClick={() =>
+              window.open(
+                whatsappHref("Hi Elvoria, I need help with my account."),
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }
+          >
+            Chat on WhatsApp
           </Button>
           <Button
             variant="outline"
             icon={Mail}
-            onClick={() => showToast("Opening email support")}
+            onClick={() => {
+              window.location.href = `mailto:${SUPPORT_EMAIL}`;
+            }}
           >
             Email us
           </Button>

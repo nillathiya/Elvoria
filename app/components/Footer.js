@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { BRAND } from "@/lib/config";
+import { BRAND, SUPPORT_EMAIL, SUPPORT_WHATSAPP_DISPLAY, whatsappHref } from "@/lib/config";
 import { legalLinks } from "@/lib/legalDocs";
+import WhatsAppIcon from "./WhatsAppIcon";
 import styles from "./Footer.module.css";
 
 // Site footer: legal disclaimer + links to the /legal/[slug] pages.
@@ -56,6 +57,24 @@ export default function Footer({ minimal = false }) {
           </Link>
         ))}
       </nav>
+
+      <div className={styles.support}>
+        <a
+          className={styles.supportBtn}
+          href={whatsappHref("Hi Elvoria, I need help with my account.")}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <WhatsAppIcon size={16} />
+          Chat on WhatsApp
+        </a>
+        <span className={styles.supportText}>
+          Support {SUPPORT_WHATSAPP_DISPLAY} ·{" "}
+          <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.link}>
+            {SUPPORT_EMAIL}
+          </a>
+        </span>
+      </div>
 
       <div className={styles.copy}>© 2008 – 2026. {BRAND}</div>
     </footer>

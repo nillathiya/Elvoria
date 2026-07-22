@@ -459,6 +459,77 @@ ul {
   }
 }
 
+/* ---------- WhatsApp floating contact button ---------- */
+/* Fixed bottom-right on every page. z-index sits above page content but below
+   modals (1000) and toasts (2000) so it never blocks a dialog. */
+.wa-fab {
+  position: fixed;
+  right: var(--space-xl);
+  bottom: var(--space-xl);
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 56px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: #25d366;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  max-width: 56px;
+  transition: max-width 0.32s var(--ease), background 0.2s var(--ease),
+    box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+  animation: fadeInUp 0.4s var(--ease) both;
+}
+.wa-fab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+.wa-fab-label {
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+  padding-right: 22px;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+/* Expand into a pill on hover/focus (pointer devices). */
+@media (hover: hover) {
+  .wa-fab:hover,
+  .wa-fab:focus-visible {
+    max-width: 260px;
+    background: #1ebe5b;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.48), 0 3px 8px rgba(0, 0, 0, 0.24);
+  }
+  .wa-fab:hover .wa-fab-label,
+  .wa-fab:focus-visible .wa-fab-label {
+    opacity: 1;
+  }
+}
+.wa-fab:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+/* Keep the button clear of the PWA install pill and toast stack on phones. */
+@media (max-width: 640px) {
+  .wa-fab {
+    right: var(--space-lg);
+    bottom: var(--space-lg);
+    height: 52px;
+    max-width: 52px;
+  }
+  .wa-fab-icon {
+    width: 52px;
+    height: 52px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
