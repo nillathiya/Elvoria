@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import BackLink from "../../components/BackLink";
 import { notFound } from "next/navigation";
 import Logo from "../../components/Logo";
+import WhatsAppIcon from "../../components/WhatsAppIcon";
 import { getLegalDoc, LEGAL_ORDER, legalLinks } from "@/lib/legalDocs";
 import { BRAND } from "@/lib/config";
 import styles from "./page.module.css";
@@ -57,6 +59,36 @@ export default async function LegalPage({ params }) {
 
           <p className={styles.intro}>{doc.intro}</p>
 
+          {doc.channels && (
+            <div className={styles.channels}>
+              {doc.channels.map((c) => (
+                <a
+                  key={c.type}
+                  href={c.href}
+                  className={styles.channel}
+                  target={c.external ? "_blank" : undefined}
+                  rel={c.external ? "noopener noreferrer" : undefined}
+                >
+                  <span
+                    className={[styles.channelIcon, styles[c.type]]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    {c.type === "whatsapp" ? (
+                      <WhatsAppIcon size={22} />
+                    ) : (
+                      <Mail size={20} />
+                    )}
+                  </span>
+                  <span className={styles.channelText}>
+                    <span className={styles.channelLabel}>{c.label}</span>
+                    <span className={styles.channelValue}>{c.value}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+
           {doc.sections.map((s, i) => (
             <section key={i} className={styles.section}>
               <h2 className={styles.h2}>{s.h}</h2>
@@ -67,6 +99,24 @@ export default async function LegalPage({ params }) {
               ))}
             </section>
           ))}
+
+          {doc.licence && (
+            <section className={styles.licence}>
+              <div className={styles.licenceHead}>
+                <span className={styles.licenceTitle}>Licensing</span>
+                <span className={styles.licenceBadge}>Demonstration only</span>
+              </div>
+              <dl className={styles.licenceGrid}>
+                {doc.licence.rows.map((r) => (
+                  <div key={r.k} className={styles.licenceRow}>
+                    <dt className={styles.licenceKey}>{r.k}</dt>
+                    <dd className={styles.licenceVal}>{r.v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className={styles.licenceNote}>{doc.licence.note}</p>
+            </section>
+          )}
         </article>
 
         <aside className={styles.side}>

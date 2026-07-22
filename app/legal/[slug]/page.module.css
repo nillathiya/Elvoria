@@ -103,6 +103,65 @@
   line-height: 1.7;
   color: var(--text-primary);
 }
+/* ---------- Contact channels ---------- */
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+.channel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1 1 220px;
+  max-width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  transition: var(--transition);
+}
+.channel:hover {
+  background: var(--bg-hover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+.channelIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-muted);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+/* WhatsApp keeps its own brand green so the mark reads as WhatsApp, not a
+   generic chat icon. */
+.channelIcon.whatsapp {
+  background: color-mix(in srgb, #25d366 16%, transparent);
+  color: #25d366;
+}
+.channelText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.channelLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.channelValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
 .section {
   margin-top: var(--space-2xl);
 }
@@ -117,6 +176,76 @@
   line-height: 1.75;
   color: var(--text-secondary);
   margin-top: var(--space-sm);
+}
+
+/* ---------- Licence card ---------- */
+.licence {
+  margin-top: var(--space-2xl);
+  padding: var(--space-lg) var(--space-xl);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+.licenceHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+.licenceTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.licenceBadge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--accent-muted);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+/* Hairline grid: the 1px gap over a border-coloured background draws the cell
+   dividers, so each row/column is separated without doubling up borders. */
+.licenceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.licenceRow {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-card);
+}
+.licenceKey {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.licenceVal {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+.licenceNote {
+  margin-top: var(--space-lg);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
 /* ---------- Side nav ---------- */
@@ -184,4 +313,5 @@
 @media (max-width: 520px) {
   .title { font-size: 26px; }
   .sideNav { grid-template-columns: 1fr; }
+  .licenceGrid { grid-template-columns: 1fr; }
 }
