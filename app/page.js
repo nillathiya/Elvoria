@@ -10,16 +10,17 @@
 //
 //  The markets section and the hero chart show REAL data pulled
 //  client-side from free, key-less providers:
-//    • Currencies — European Central Bank reference rates via the
-//      Frankfurter API (api.frankfurter.dev). One time-series call
-//      powers the live price, the daily change and the sparkline.
+//    • Currencies — AwesomeAPI (economia.awesomeapi.com.br). Free, no
+//      key, CORS-enabled and INTRADAY, so the table actually ticks.
+//      /last gives the live bid + day change; /daily gives closes for
+//      the sparkline. Polled every 30s.
 //    • Crypto — CoinGecko's public markets endpoint (live price,
 //      24h change and a 7-day sparkline).
 //  Nothing here is fabricated: if a provider is unreachable the
 //  section says so rather than inventing numbers.
 // ============================================================
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -47,18 +48,19 @@ import { legalLinks } from "@/lib/legalDocs";
 import styles from "./page.module.css";
 
 // ---- Data providers (free, no API key) ----------------------
-// Everything is quoted against USD so a single Frankfurter time-series call
-// (base=USD) lets us derive every major pair: for X per 1 USD = r[X],
-//   EUR/USD = 1 / r.EUR,  USD/JPY = r.JPY,  etc.
-const FX_SYMBOLS = ["EUR", "GBP", "JPY", "CHF", "CAD", "AUD"];
+// AwesomeAPI quotes each pair the conventional way (bid = price), so no
+// cross-rate maths is needed. `code` is the URL segment; `key` is how the pair
+// comes back in the /last response (dash stripped).
 const FX_PAIRS = [
-  { symbol: "EUR/USD", name: "Euro / US Dollar", calc: (r) => 1 / r.EUR, dp: 4 },
-  { symbol: "GBP/USD", name: "British Pound / US Dollar", calc: (r) => 1 / r.GBP, dp: 4 },
-  { symbol: "USD/JPY", name: "US Dollar / Japanese Yen", calc: (r) => r.JPY, dp: 2 },
-  { symbol: "USD/CHF", name: "US Dollar / Swiss Franc", calc: (r) => r.CHF, dp: 4 },
-  { symbol: "USD/CAD", name: "US Dollar / Canadian Dollar", calc: (r) => r.CAD, dp: 4 },
-  { symbol: "AUD/USD", name: "Australian Dollar / US Dollar", calc: (r) => 1 / r.AUD, dp: 4 },
+  { code: "EUR-USD", key: "EURUSD", symbol: "EUR/USD", name: "Euro / US Dollar", dp: 4 },
+  { code: "GBP-USD", key: "GBPUSD", symbol: "GBP/USD", name: "British Pound / US Dollar", dp: 4 },
+  { code: "USD-JPY", key: "USDJPY", symbol: "USD/JPY", name: "US Dollar / Japanese Yen", dp: 2 },
+  { code: "USD-CHF", key: "USDCHF", symbol: "USD/CHF", name: "US Dollar / Swiss Franc", dp: 4 },
+  { code: "USD-CAD", key: "USDCAD", symbol: "USD/CAD", name: "US Dollar / Canadian Dollar", dp: 4 },
+  { code: "AUD-USD", key: "AUDUSD", symbol: "AUD/USD", name: "Australian Dollar / US Dollar", dp: 4 },
 ];
+const FX_BASE = "https://economia.awesomeapi.com.br/json";
+const FX_LAST_URL = `${FX_BASE}/last/${FX_PAIRS.map((p) => p.code).join(",")}`;
 
 const CRYPTO_IDS = ["bitcoin", "ethereum", "solana", "ripple", "cardano"];
 
@@ -204,46 +206,71 @@ export default function LandingPage() {
   const [fx, setFx] = useState({ loading: true, error: "", rows: [], asOf: "" });
   const [crypto, setCrypto] = useState({ loading: true, error: "", rows: [] });
 
-  // ---- Currencies: one Frankfurter time-series call powers price, the
-  //      daily change and the sparkline for every pair. ECB rates are daily
-  //      reference rates, so "change" is day-over-day, labelled as such.
+  // Sparkline history (daily closes per pair) is fetched once and reused on
+  // every poll, so refreshing the live price is a single cheap /last call.
+  const fxHistory = useRef({});
+
+  // ---- Currencies: AwesomeAPI intraday quotes. /last carries the live bid and
+  //      the day's % change in one call; the sparkline comes from /daily, which
+  //      we fetch only until it's cached. Polled for a genuinely live table.
   const loadFx = useCallback(async () => {
     try {
-      const from = new Date();
-      from.setDate(from.getDate() - 60);
-      const start = from.toISOString().slice(0, 10);
-      const url = `https://api.frankfurter.dev/v1/${start}..?base=USD&symbols=${FX_SYMBOLS.join(",")}`;
-      const res = await fetch(url);
+      const res = await fetch(FX_LAST_URL);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      const dates = Object.keys(json.rates || {}).sort();
-      if (dates.length < 2) throw new Error("no data");
+      const last = await res.json();
 
-      const rows = FX_PAIRS.map((p) => {
-        const series = dates
-          .map((d) => {
-            const r = json.rates[d];
-            const v = r ? p.calc(r) : null;
-            return Number.isFinite(v) ? v : null;
+      // First run: pull ~30 daily closes per pair for the sparklines.
+      if (!Object.keys(fxHistory.current).length) {
+        const entries = await Promise.all(
+          FX_PAIRS.map(async (p) => {
+            try {
+              const r = await fetch(`${FX_BASE}/daily/${p.code}/30`);
+              const arr = await r.json();
+              // /daily returns newest-first — reverse for a left-to-right chart.
+              const series = arr.map((d) => Number(d.bid)).filter(Number.isFinite).reverse();
+              return [p.key, series];
+            } catch {
+              return [p.key, []];
+            }
           })
-          .filter((v) => v !== null);
-        const price = series[series.length - 1];
-        const prev = series[series.length - 2];
-        const change = prev ? ((price - prev) / prev) * 100 : 0;
+        );
+        fxHistory.current = Object.fromEntries(entries);
+      }
+
+      let asOf = "";
+      const rows = FX_PAIRS.map((p) => {
+        const q = last[p.key];
+        if (!q) return null;
+        const price = Number(q.bid);
+        const change = Number(q.pctChange);
+        if (q.create_date && q.create_date > asOf) asOf = q.create_date;
+        // Append the live tick so the sparkline reflects the latest price.
+        const base = fxHistory.current[p.key] || [];
+        const series = base.length ? [...base, price] : base;
         return {
           symbol: p.symbol,
           name: p.name,
           priceText: fmtFixed(price, p.dp),
-          change,
-          up: change >= 0,
+          change: Number.isFinite(change) ? change : 0,
+          up: Number.isFinite(change) ? change >= 0 : true,
           series,
-          high: fmtFixed(Math.max(...series), p.dp),
-          low: fmtFixed(Math.min(...series), p.dp),
+          bid: fmtFixed(Number(q.bid), p.dp),
+          ask: fmtFixed(Number(q.ask), p.dp),
+          high: fmtFixed(Number(q.high), p.dp),
+          low: fmtFixed(Number(q.low), p.dp),
         };
-      });
-      setFx({ loading: false, error: "", rows, asOf: json.end_date || dates[dates.length - 1] });
+      }).filter(Boolean);
+
+      if (!rows.length) throw new Error("no data");
+      setFx({ loading: false, error: "", rows, asOf });
     } catch (e) {
-      setFx({ loading: false, error: "Live rates are temporarily unavailable.", rows: [], asOf: "" });
+      // Keep the last good rows on a transient poll failure; only surface an
+      // error if we never had data.
+      setFx((s) => ({
+        ...s,
+        loading: false,
+        error: s.rows.length ? "" : "Live rates are temporarily unavailable.",
+      }));
     }
   }, []);
 
@@ -269,16 +296,25 @@ export default function LandingPage() {
       });
       setCrypto({ loading: false, error: "", rows });
     } catch (e) {
-      setCrypto({ loading: false, error: "Live crypto prices are temporarily unavailable.", rows: [] });
+      setCrypto((s) => ({
+        ...s,
+        loading: false,
+        error: s.rows.length ? "" : "Live crypto prices are temporarily unavailable.",
+      }));
     }
   }, []);
 
   useEffect(() => {
     loadFx();
     loadCrypto();
-    // Crypto moves intraday — refresh it every 60s. FX (ECB) updates daily.
-    const id = setInterval(loadCrypto, 60_000);
-    return () => clearInterval(id);
+    // Both feeds move intraday. FX ticks fastest, so poll it every 30s; crypto
+    // every 60s is plenty and stays clear of CoinGecko's free-tier limits.
+    const fxId = setInterval(loadFx, 30_000);
+    const cryptoId = setInterval(loadCrypto, 60_000);
+    return () => {
+      clearInterval(fxId);
+      clearInterval(cryptoId);
+    };
   }, [loadFx, loadCrypto]);
 
   const nav = [
@@ -289,7 +325,7 @@ export default function LandingPage() {
   ];
 
   const active = tab === "Currencies" ? fx : crypto;
-  const changeLabel = tab === "Currencies" ? "1D" : "24h";
+  const changeLabel = tab === "Currencies" ? "Today" : "24h";
   const hero = fx.rows[0]; // EUR/USD, live
 
   return (
@@ -382,13 +418,13 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Live quote card — real EUR/USD from the ECB via Frankfurter */}
+          {/* Live quote card — real EUR/USD, intraday via AwesomeAPI */}
           <div className={styles.heroCard}>
             <div className={styles.quoteHead}>
               <div>
                 <div className={styles.quoteSymbol}>{hero ? hero.symbol : "EUR/USD"}</div>
                 <div className={styles.quoteName}>
-                  <span className={styles.liveDot} /> {hero ? "ECB reference · live" : "Loading…"}
+                  <span className={styles.liveDot} /> {hero ? "Live · interbank" : "Loading…"}
                 </div>
               </div>
               {hero && (
@@ -403,11 +439,11 @@ export default function LandingPage() {
             <Sparkline data={hero?.series} variant="hero" up={hero?.up} />
             <div className={styles.quoteRow}>
               <div>
-                <span className={styles.quoteLabel}>60D High</span>
+                <span className={styles.quoteLabel}>Day High</span>
                 <span className={styles.quoteVal}>{hero ? hero.high : "—"}</span>
               </div>
               <div>
-                <span className={styles.quoteLabel}>60D Low</span>
+                <span className={styles.quoteLabel}>Day Low</span>
                 <span className={styles.quoteVal}>{hero ? hero.low : "—"}</span>
               </div>
               <div>
@@ -512,8 +548,9 @@ export default function LandingPage() {
         <p className={styles.indicative}>
           {tab === "Currencies" ? (
             <>
-              Currency rates: European Central Bank reference rates via Frankfurter
-              {fx.asOf ? ` · updated ${fx.asOf}` : ""}. Daily reference rates, not tick data.
+              Live currency rates via AwesomeAPI (economia.awesomeapi.com.br)
+              {fx.asOf ? ` · updated ${fx.asOf}` : ""}. Refreshes every 30 seconds; FX markets
+              close on weekends.
             </>
           ) : (
             <>Crypto prices: CoinGecko public market data · refreshes every 60 seconds.</>
