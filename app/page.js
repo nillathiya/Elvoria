@@ -8,14 +8,14 @@
 //  footer). The login form that used to live here now lives at
 //  /login; this page's CTAs point at /login and /register.
 //
-//  The markets section and the hero chart show REAL data pulled
-//  client-side from free, key-less providers:
-//    • Currencies — AwesomeAPI (economia.awesomeapi.com.br). Free, no
-//      key, CORS-enabled and INTRADAY, so the table actually ticks.
-//      /last gives the live bid + day change; /daily gives closes for
-//      the sparkline. Polled every 30s.
-//    • Crypto — CoinGecko's public markets endpoint (live price,
-//      24h change and a 7-day sparkline).
+//  The markets section and the hero chart show REAL data from free,
+//  key-less providers:
+//    • Currencies — TrueFX real-time ticks, via our own /api/fx proxy.
+//      TrueFX has no CORS header so the browser can't call it directly;
+//      the proxy fetches it server-side and we poll same-origin (never
+//      blocked). Sparklines are built from the live ticks we observe.
+//    • Crypto — CoinGecko's public markets endpoint, called client-side
+//      (live price, 24h change and a 7-day sparkline).
 //  Nothing here is fabricated: if a provider is unreachable the
 //  section says so rather than inventing numbers.
 // ============================================================
@@ -48,19 +48,16 @@ import { legalLinks } from "@/lib/legalDocs";
 import styles from "./page.module.css";
 
 // ---- Data providers (free, no API key) ----------------------
-// AwesomeAPI quotes each pair the conventional way (bid = price), so no
-// cross-rate maths is needed. `code` is the URL segment; `key` is how the pair
-// comes back in the /last response (dash stripped).
+// FX comes from /api/fx (our TrueFX proxy), keyed by the standard pair symbol.
+// TrueFX quotes 5 decimals (3 for JPY crosses).
 const FX_PAIRS = [
-  { code: "EUR-USD", key: "EURUSD", symbol: "EUR/USD", name: "Euro / US Dollar", dp: 4 },
-  { code: "GBP-USD", key: "GBPUSD", symbol: "GBP/USD", name: "British Pound / US Dollar", dp: 4 },
-  { code: "USD-JPY", key: "USDJPY", symbol: "USD/JPY", name: "US Dollar / Japanese Yen", dp: 2 },
-  { code: "USD-CHF", key: "USDCHF", symbol: "USD/CHF", name: "US Dollar / Swiss Franc", dp: 4 },
-  { code: "USD-CAD", key: "USDCAD", symbol: "USD/CAD", name: "US Dollar / Canadian Dollar", dp: 4 },
-  { code: "AUD-USD", key: "AUDUSD", symbol: "AUD/USD", name: "Australian Dollar / US Dollar", dp: 4 },
+  { symbol: "EUR/USD", name: "Euro / US Dollar", dp: 5 },
+  { symbol: "GBP/USD", name: "British Pound / US Dollar", dp: 5 },
+  { symbol: "USD/JPY", name: "US Dollar / Japanese Yen", dp: 3 },
+  { symbol: "USD/CHF", name: "US Dollar / Swiss Franc", dp: 5 },
+  { symbol: "USD/CAD", name: "US Dollar / Canadian Dollar", dp: 5 },
+  { symbol: "AUD/USD", name: "Australian Dollar / US Dollar", dp: 5 },
 ];
-const FX_BASE = "https://economia.awesomeapi.com.br/json";
-const FX_LAST_URL = `${FX_BASE}/last/${FX_PAIRS.map((p) => p.code).join(",")}`;
 
 const CRYPTO_IDS = ["bitcoin", "ethereum", "solana", "ripple", "cardano"];
 
@@ -148,6 +145,24 @@ function pct(n) {
   return `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;
 }
 
+// Compares a fresh price against the last one seen for a symbol and returns the
+// tick direction, bumping a per-symbol counter whenever the price actually
+// moves. The counter is used as a React key so the flash animation replays even
+// on repeated moves in the same direction — exactly how an exchange ticker
+// blinks green on an uptick and red on a downtick. Both maps are mutated in
+// place (they live in refs, not render state).
+function computeTick(prevMap, seqMap, symbol, price) {
+  let dir = "";
+  const prev = prevMap[symbol];
+  if (Number.isFinite(price) && prev != null) {
+    if (price > prev) dir = "up";
+    else if (price < prev) dir = "down";
+  }
+  if (dir) seqMap[symbol] = (seqMap[symbol] || 0) + 1;
+  if (Number.isFinite(price)) prevMap[symbol] = price;
+  return { dir, seq: seqMap[symbol] || 0 };
+}
+
 // A pure-SVG sparkline drawn from a real price series.
 function Sparkline({ data, variant = "row", up = true }) {
   const w = variant === "hero" ? 320 : 96;
@@ -206,63 +221,55 @@ export default function LandingPage() {
   const [fx, setFx] = useState({ loading: true, error: "", rows: [], asOf: "" });
   const [crypto, setCrypto] = useState({ loading: true, error: "", rows: [] });
 
-  // Sparkline history (daily closes per pair) is fetched once and reused on
-  // every poll, so refreshing the live price is a single cheap /last call.
-  const fxHistory = useRef({});
+  // Rolling window of the live ticks we've observed per pair, so the sparkline
+  // is a real intraday chart that grows as you watch. Seeded with the day's
+  // open so there's a line on the very first render.
+  const fxSeries = useRef({});
 
-  // ---- Currencies: AwesomeAPI intraday quotes. /last carries the live bid and
-  //      the day's % change in one call; the sparkline comes from /daily, which
-  //      we fetch only until it's cached. Polled for a genuinely live table.
+  // Per-symbol last price + tick counter, shared by both tabs, driving the
+  // green-up / red-down flash on every price move.
+  const prevPrice = useRef({});
+  const tickSeq = useRef({});
+
+  // ---- Currencies: TrueFX real-time ticks via our same-origin /api/fx proxy.
+  //      Each poll flashes any pair that moved and extends its live sparkline.
   const loadFx = useCallback(async () => {
     try {
-      const res = await fetch(FX_LAST_URL);
+      const res = await fetch("/api/fx");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const last = await res.json();
+      const json = await res.json();
+      if (!json.ok || !Array.isArray(json.pairs)) throw new Error("bad payload");
+      const bySymbol = Object.fromEntries(json.pairs.map((p) => [p.symbol, p]));
 
-      // First run: pull ~30 daily closes per pair for the sparklines.
-      if (!Object.keys(fxHistory.current).length) {
-        const entries = await Promise.all(
-          FX_PAIRS.map(async (p) => {
-            try {
-              const r = await fetch(`${FX_BASE}/daily/${p.code}/30`);
-              const arr = await r.json();
-              // /daily returns newest-first — reverse for a left-to-right chart.
-              const series = arr.map((d) => Number(d.bid)).filter(Number.isFinite).reverse();
-              return [p.key, series];
-            } catch {
-              return [p.key, []];
-            }
-          })
-        );
-        fxHistory.current = Object.fromEntries(entries);
-      }
-
-      let asOf = "";
-      const rows = FX_PAIRS.map((p) => {
-        const q = last[p.key];
+      const rows = FX_PAIRS.map((cfg) => {
+        const q = bySymbol[cfg.symbol];
         if (!q) return null;
-        const price = Number(q.bid);
-        const change = Number(q.pctChange);
-        if (q.create_date && q.create_date > asOf) asOf = q.create_date;
-        // Append the live tick so the sparkline reflects the latest price.
-        const base = fxHistory.current[p.key] || [];
-        const series = base.length ? [...base, price] : base;
+        const price = q.bid;
+        const change = Number(q.change) || 0;
+        const { dir, seq } = computeTick(prevPrice.current, tickSeq.current, cfg.symbol, price);
+        // Grow the live sparkline: seed with the day's open, then append each
+        // observed tick, capped so it stays a tidy window.
+        const prev = fxSeries.current[cfg.symbol] || (Number.isFinite(q.open) ? [q.open] : []);
+        const series = [...prev, price].slice(-60);
+        fxSeries.current[cfg.symbol] = series;
         return {
-          symbol: p.symbol,
-          name: p.name,
-          priceText: fmtFixed(price, p.dp),
-          change: Number.isFinite(change) ? change : 0,
-          up: Number.isFinite(change) ? change >= 0 : true,
+          symbol: cfg.symbol,
+          name: cfg.name,
+          priceText: fmtFixed(price, cfg.dp),
+          change,
+          up: change >= 0,
+          dir,
+          seq,
           series,
-          bid: fmtFixed(Number(q.bid), p.dp),
-          ask: fmtFixed(Number(q.ask), p.dp),
-          high: fmtFixed(Number(q.high), p.dp),
-          low: fmtFixed(Number(q.low), p.dp),
+          bid: fmtFixed(q.bid, cfg.dp),
+          ask: fmtFixed(q.ask, cfg.dp),
+          high: fmtFixed(q.high, cfg.dp),
+          low: fmtFixed(q.low, cfg.dp),
         };
       }).filter(Boolean);
 
       if (!rows.length) throw new Error("no data");
-      setFx({ loading: false, error: "", rows, asOf });
+      setFx({ loading: false, error: "", rows, asOf: json.asOf || Date.now() });
     } catch (e) {
       // Keep the last good rows on a transient poll failure; only surface an
       // error if we never had data.
@@ -285,12 +292,16 @@ export default function LandingPage() {
       const json = await res.json();
       const rows = json.map((c) => {
         const change = c.price_change_percentage_24h ?? 0;
+        const symbol = `${c.symbol.toUpperCase()}/USD`;
+        const { dir, seq } = computeTick(prevPrice.current, tickSeq.current, symbol, c.current_price);
         return {
-          symbol: `${c.symbol.toUpperCase()}/USD`,
+          symbol,
           name: c.name,
           priceText: fmtCrypto(c.current_price),
           change,
           up: change >= 0,
+          dir,
+          seq,
           series: c.sparkline_in_7d?.price || [],
         };
       });
@@ -307,10 +318,11 @@ export default function LandingPage() {
   useEffect(() => {
     loadFx();
     loadCrypto();
-    // Both feeds move intraday. FX ticks fastest, so poll it every 30s; crypto
-    // every 60s is plenty and stays clear of CoinGecko's free-tier limits.
-    const fxId = setInterval(loadFx, 30_000);
-    const cryptoId = setInterval(loadCrypto, 60_000);
+    // Poll like an exchange feed: FX every 3s (same-origin proxy, ~2s upstream
+    // cache — cheap and snappy), crypto every 20s to stay clear of CoinGecko's
+    // free-tier limits. Each poll flashes any ticker that moved.
+    const fxId = setInterval(loadFx, 3_000);
+    const cryptoId = setInterval(loadCrypto, 20_000);
     return () => {
       clearInterval(fxId);
       clearInterval(cryptoId);
@@ -434,7 +446,22 @@ export default function LandingPage() {
               )}
             </div>
             <div className={styles.quotePrice}>
-              {hero ? hero.priceText : <span className={`${styles.skelPrice} skeleton`} />}
+              {hero ? (
+                <span
+                  key={hero.seq}
+                  className={
+                    hero.dir === "up"
+                      ? styles.tickUpText
+                      : hero.dir === "down"
+                      ? styles.tickDownText
+                      : ""
+                  }
+                >
+                  {hero.priceText}
+                </span>
+              ) : (
+                <span className={`${styles.skelPrice} skeleton`} />
+              )}
             </div>
             <Sparkline data={hero?.series} variant="hero" up={hero?.up} />
             <div className={styles.quoteRow}>
@@ -522,7 +549,16 @@ export default function LandingPage() {
                   <tr key={r.symbol}>
                     <td className={styles.sym}>{r.symbol}</td>
                     <td className={styles.hideSm}>{r.name}</td>
-                    <td className={styles.num}>{r.priceText}</td>
+                    <td className={styles.num}>
+                      <span
+                        key={r.seq}
+                        className={`${styles.price} ${
+                          r.dir === "up" ? styles.tickUp : r.dir === "down" ? styles.tickDown : ""
+                        }`}
+                      >
+                        {r.priceText}
+                      </span>
+                    </td>
                     <td className={`${styles.num} ${r.up ? styles.up : styles.down}`}>
                       <span className={styles.changeCell}>
                         {r.up ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -548,9 +584,9 @@ export default function LandingPage() {
         <p className={styles.indicative}>
           {tab === "Currencies" ? (
             <>
-              Live currency rates via AwesomeAPI (economia.awesomeapi.com.br)
-              {fx.asOf ? ` · updated ${fx.asOf}` : ""}. Refreshes every 30 seconds; FX markets
-              close on weekends.
+              Real-time FX from TrueFX (via our server proxy)
+              {fx.asOf ? ` · updated ${new Date(fx.asOf).toLocaleTimeString()}` : ""}. Refreshes
+              every 3 seconds; FX markets close on weekends.
             </>
           ) : (
             <>Crypto prices: CoinGecko public market data · refreshes every 60 seconds.</>

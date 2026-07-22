@@ -512,6 +512,56 @@
 }
 .up { color: var(--success); }
 .down { color: var(--error); }
+
+/* ---- Live tick flash (exchange-style) ----
+   A ticker's price cell blinks green on an uptick and red on a downtick, then
+   settles back to neutral. The React key on the span is the tick counter, so
+   the animation replays on every move — even two upticks in a row. */
+.price {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes tickUpFlash {
+  0% {
+    background: color-mix(in srgb, var(--success) 42%, transparent);
+    color: var(--success);
+  }
+  100% {
+    background: transparent;
+    color: var(--text-primary);
+  }
+}
+@keyframes tickDownFlash {
+  0% {
+    background: color-mix(in srgb, var(--error) 42%, transparent);
+    color: var(--error);
+  }
+  100% {
+    background: transparent;
+    color: var(--text-primary);
+  }
+}
+.tickUp {
+  animation: tickUpFlash 1s var(--ease) both;
+}
+.tickDown {
+  animation: tickDownFlash 1s var(--ease) both;
+}
+
+/* Colour-only flash for the large hero number (a pill would look heavy). */
+@keyframes tickUpText {
+  0% { color: var(--success); }
+  100% { color: var(--text-primary); }
+}
+@keyframes tickDownText {
+  0% { color: var(--error); }
+  100% { color: var(--text-primary); }
+}
+.tickUpText { animation: tickUpText 1s var(--ease) both; }
+.tickDownText { animation: tickDownText 1s var(--ease) both; }
 .tradeBtn {
   display: inline-block;
   padding: 7px 16px;
