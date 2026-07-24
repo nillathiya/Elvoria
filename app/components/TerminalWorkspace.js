@@ -343,7 +343,7 @@ export default function TerminalWorkspace({ standalone = false }) {
           )}
           <div className={styles.accountChip}>
             <div className={styles.accMeta}>
-              <span className={styles.accBadge}>Demo</span>
+              <span className={styles.accBadge}>Practice</span>
               <span className={styles.accType}>Standard</span>
             </div>
             <div className={styles.accBal}>

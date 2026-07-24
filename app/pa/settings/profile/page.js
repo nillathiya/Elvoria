@@ -15,7 +15,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Badge from "@/app/components/Badge";
 import { useApp } from "@/app/context/AppContext";
-import { user as demoUser, profileFields, verificationSteps } from "@/lib/demoData";
+import { user as fallbackUser, profileFields, verificationSteps } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const VERIFY_ICONS = {
@@ -30,23 +30,23 @@ export default function ProfilePage() {
 
   // This page shows you your own identity, so the parts we actually know come
   // from the session. Only the fields this system has no concept of — phone,
-  // date of birth, tier, client id — fall back to the demo record. Rendering
-  // "John Doe" to someone signed in as demouser would just be wrong.
+  // date of birth, tier, client id — fall back to the placeholder record.
+  // Rendering a stale name to a signed-in user would just be wrong.
   const user = {
-    ...demoUser,
-    name: sessionUser?.username ?? demoUser.name,
-    email: sessionUser?.email ?? demoUser.email,
-    initials: (sessionUser?.username ?? demoUser.name).slice(0, 2).toUpperCase(),
+    ...fallbackUser,
+    name: sessionUser?.username ?? fallbackUser.name,
+    email: sessionUser?.email ?? fallbackUser.email,
+    initials: (sessionUser?.username ?? fallbackUser.name).slice(0, 2).toUpperCase(),
     // The account id and join date are real — they were showing a stranger's
     // client number and a 2023 join date to someone who signed up today.
-    clientId: sessionUser?.id ?? demoUser.clientId,
+    clientId: sessionUser?.id ?? fallbackUser.clientId,
     memberSince: sessionUser?.createdAt
       ? new Date(sessionUser.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-      : demoUser.memberSince,
+      : fallbackUser.memberSince,
   };
 
   // The details table is driven by its own list, so it needs the same
-  // treatment — otherwise the header greets demouser while the table below
+  // treatment — otherwise the header greets a stale name while the table below
   // calls them John Doe, on the page whose whole job is showing your identity.
   const fields = profileFields.map((f) => {
     if (f.key === "name") return { ...f, value: user.name };

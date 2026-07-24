@@ -7,7 +7,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import { useApp } from "@/app/context/AppContext";
-import { currencies } from "@/lib/demoData";
+import { currencies } from "@/lib/uiData";
 import { formatMoney } from "@/lib/config";
 import styles from "./page.module.css";
 

@@ -6,7 +6,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Badge from "@/app/components/Badge";
 import { useApp } from "@/app/context/AppContext";
-import { tradingSignals } from "@/lib/demoData";
+import { tradingSignals } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const FILTERS = ["All", "Buy", "Sell"];

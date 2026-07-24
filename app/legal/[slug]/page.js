@@ -52,11 +52,6 @@ export default async function LegalPage({ params }) {
           <h1 className={styles.title}>{doc.title}</h1>
           <p className={styles.updated}>Last updated: {doc.updated}</p>
 
-          <div className={styles.note}>
-            This is demonstration content for a portfolio project. It is not a real legal
-            agreement and does not create any binding obligations.
-          </div>
-
           <p className={styles.intro}>{doc.intro}</p>
 
           {doc.channels && (
@@ -104,7 +99,7 @@ export default async function LegalPage({ params }) {
             <section className={styles.licence}>
               <div className={styles.licenceHead}>
                 <span className={styles.licenceTitle}>Licensing</span>
-                <span className={styles.licenceBadge}>Demonstration only</span>
+                <span className={styles.licenceBadge}>Regulatory information</span>
               </div>
               <dl className={styles.licenceGrid}>
                 {doc.licence.rows.map((r) => (
@@ -138,7 +133,7 @@ export default async function LegalPage({ params }) {
       </main>
 
       <footer className={styles.foot}>
-        © 2026. {BRAND}. Demonstration platform — not a real brokerage.
+        © 2026 {BRAND}. All rights reserved.
       </footer>
     </div>
   );

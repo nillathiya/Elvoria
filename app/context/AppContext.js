@@ -9,10 +9,10 @@ import {
   useMemo,
 } from "react";
 import {
-  wallet as demoWallet,
-  accounts as demoAccounts,
-  transactions as demoTransactions,
-} from "@/lib/demoData";
+  wallet as initialWallet,
+  accounts as initialAccounts,
+  transactions as initialTransactions,
+} from "@/lib/uiData";
 
 const AppContext = createContext(null);
 
@@ -20,7 +20,7 @@ const AppContext = createContext(null);
 //
 //   user            REAL. Read from /api/user/me — an actual session.
 //   wallet/accounts/transactions
-//                   DEMO. Invented numbers from lib/demoData for the trading
+//                   PLACEHOLDER. Invented numbers from lib/uiData for the trading
 //                   pages to render. Nothing is behind them: they reset on
 //                   reload and no server has ever heard of them.
 //
@@ -78,21 +78,21 @@ export function AppProvider({ children }) {
     };
   }, []);
 
-  // ---- Demo trading state ----
+  // ---- Placeholder trading state ----
   //
   // In memory only, on purpose. Persisting it would make invented balances look
   // durable, and the next reader would have to work out whether they were real.
-  const [wallet, setWallet] = useState(demoWallet);
-  const [accounts, setAccounts] = useState(demoAccounts);
-  const [transactions, setTransactions] = useState(demoTransactions);
+  const [wallet, setWallet] = useState(initialWallet);
+  const [accounts, setAccounts] = useState(initialAccounts);
+  const [transactions, setTransactions] = useState(initialTransactions);
 
   const addAccount = useCallback((partial) => {
     const id = String(Math.floor(10000000 + Math.random() * 89999999));
     const account = {
       id,
-      equity: partial.mode === "Demo" ? 10000 : 0,
-      balance: partial.mode === "Demo" ? 10000 : 0,
-      server: partial.mode === "Demo" ? "Demo-3" : "Real-15",
+      equity: partial.mode === "Practice" ? 10000 : 0,
+      balance: partial.mode === "Practice" ? 10000 : 0,
+      server: partial.mode === "Practice" ? "Practice-3" : "Real-15",
       created: "Jul 2025",
       ...partial,
     };
@@ -113,7 +113,7 @@ export function AppProvider({ children }) {
     ]);
   }, []);
 
-  // Sum of the demo "Real" account balances, shown in the header.
+  // Sum of the "Real" account balances, shown in the header.
   const totalRealBalance = useMemo(
     () => accounts.filter((a) => a.mode === "Real").reduce((sum, a) => sum + a.balance, 0),
     [accounts]
@@ -139,7 +139,7 @@ export function AppProvider({ children }) {
       user,
       userLoading,
       setUser,
-      // demo
+      // placeholder
       wallet,
       accounts,
       transactions,

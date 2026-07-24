@@ -22,7 +22,7 @@ import Button from "../../components/Button";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import { useApp } from "../../context/AppContext";
-import { user as demoUser, verificationSteps } from "@/lib/demoData";
+import { user as fallbackUser, verificationSteps } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const verifyIcons = {
@@ -36,18 +36,18 @@ export default function SettingsPage() {
   const { theme, toggleTheme, showToast, user: sessionUser } = useApp();
 
   // Name and email come from the session — this is the user's own record.
-  // Phone, country and date of birth are demo values: the system does not
+  // Phone, country and date of birth are placeholder values: the system does not
   // collect them.
   const [info, setInfo] = useState({
-    "Full Name": sessionUser?.username ?? demoUser.name,
-    Email: sessionUser?.email ?? demoUser.email,
-    Phone: demoUser.phone,
-    Country: demoUser.country,
-    "Date of Birth": demoUser.dob,
+    "Full Name": sessionUser?.username ?? fallbackUser.name,
+    Email: sessionUser?.email ?? fallbackUser.email,
+    Phone: fallbackUser.phone,
+    Country: fallbackUser.country,
+    "Date of Birth": fallbackUser.dob,
   });
 
   // The session arrives after the first render, and useState's initial value is
-  // only read once — without this the demo name would stick permanently.
+  // only read once — without this the placeholder name would stick permanently.
   useEffect(() => {
     if (!sessionUser) return;
     setInfo((prev) => ({

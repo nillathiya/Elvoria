@@ -5,7 +5,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Badge from "@/app/components/Badge";
 import { useApp } from "@/app/context/AppContext";
-import { vpsPlans } from "@/lib/demoData";
+import { vpsPlans } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const highlights = [

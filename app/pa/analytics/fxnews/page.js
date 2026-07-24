@@ -4,7 +4,7 @@ import { useState } from "react";
 import Card from "@/app/components/Card";
 import Badge from "@/app/components/Badge";
 import { useApp } from "@/app/context/AppContext";
-import { fxNews } from "@/lib/demoData";
+import { fxNews } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const CATEGORIES = ["All", "Forex", "Commodities", "Crypto", "Indices"];

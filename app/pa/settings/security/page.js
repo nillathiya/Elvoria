@@ -15,14 +15,14 @@ import Button from "@/app/components/Button";
 import Badge from "@/app/components/Badge";
 import Input from "@/app/components/Input";
 import { useApp } from "@/app/context/AppContext";
-import { securityChecklist, securitySessions } from "@/lib/demoData";
+import { securityChecklist, securitySessions } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 export default function SecurityPage() {
   const { showToast, user: sessionUser } = useApp();
 
   // "Email confirmed" names an address, and it should be the address of the
-  // person reading the page. The rest of the checklist is demo.
+  // person reading the page. The rest of the checklist is placeholder.
   const checklist = securityChecklist.map((c) =>
     c.key === "email" && sessionUser?.email ? { ...c, desc: sessionUser.email } : c
   );

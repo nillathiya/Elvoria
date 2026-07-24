@@ -693,8 +693,7 @@ export default function LandingPage() {
           <div className={styles.footerBrand}>
             <Logo size={38} />
             <p className={styles.footerBlurb}>
-              {BRAND} is a demonstration multi-asset trading interface. It is not a licensed
-              financial services provider and is not affiliated with any real brokerage.
+              {BRAND} is a multi-asset trading platform for forex, metals, indices and crypto.
             </p>
             <a
               className={styles.footerWa}

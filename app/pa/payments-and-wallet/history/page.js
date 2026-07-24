@@ -8,7 +8,7 @@ import Button from "@/app/components/Button";
 import Table from "@/app/components/Table";
 import { useApp } from "@/app/context/AppContext";
 import { formatMoney } from "@/lib/config";
-import { demoStatusVariant } from "@/lib/demoData";
+import { uiStatusVariant } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const PER_PAGE = 10;
@@ -124,7 +124,7 @@ export default function PaymentsHistoryPage() {
       header: "Status",
       align: "right",
       sortable: true,
-      render: (r) => <Badge variant={demoStatusVariant(r.status)}>{r.status}</Badge>,
+      render: (r) => <Badge variant={uiStatusVariant(r.status)}>{r.status}</Badge>,
     },
   ];
 

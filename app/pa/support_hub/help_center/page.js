@@ -18,7 +18,7 @@ import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import WhatsAppIcon from "@/app/components/WhatsAppIcon";
 import { useApp } from "@/app/context/AppContext";
-import { helpCategories, helpFaqs } from "@/lib/demoData";
+import { helpCategories, helpFaqs } from "@/lib/uiData";
 import { whatsappHref, SUPPORT_EMAIL, SUPPORT_WHATSAPP_DISPLAY } from "@/lib/config";
 import styles from "./page.module.css";
 
@@ -91,7 +91,6 @@ export default function HelpCenterPage() {
                 <div className={styles.catText}>
                   <div className={styles.catTitle}>{c.title}</div>
                   <p className={styles.catDesc}>{c.desc}</p>
-                  <span className={styles.catCount}>{c.articles} articles</span>
                 </div>
               </Card>
             );

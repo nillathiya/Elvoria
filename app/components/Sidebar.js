@@ -23,9 +23,9 @@ import Logo from "./Logo";
 import { useApp } from "../context/AppContext";
 import styles from "./Sidebar.module.css";
 
-// Navigation for the demo personal area.
+// Navigation for the personal area.
 //
-// Everything under Trading renders invented data from lib/demoData — there is
+// Everything under Trading renders invented data from lib/uiData — there is
 // no trading engine behind any of it. Deposit and Withdrawal are the exception:
 // those are wired to the real API.
 const NAV = [
@@ -46,12 +46,11 @@ const NAV = [
     icon: WalletCards,
     children: [
       // Deposit and Withdrawal are the only entries here backed by the real
-      // API. The three below move demo balances around in memory.
+      // API. The three below move placeholder balances around in memory.
       { href: "/pa/deposit", label: "Deposit" },
       { href: "/pa/withdraw", label: "Withdrawal" },
       { href: "/pa/payments-and-wallet/transfer", label: "Transfer", badge: "New" },
       { href: "/pa/payments-and-wallet/history", label: "Transaction history" },
-      { href: "/pa/payments-and-wallet/crypto-wallet", label: "Crypto wallet" },
     ],
   },
   {

@@ -209,7 +209,7 @@
   letter-spacing: -0.02em;
 }
 
-/* Controls row: Real/Demo toggle + sort + view */
+/* Controls row: Real/Practice toggle + sort + view */
 .controls {
   display: flex;
   align-items: center;

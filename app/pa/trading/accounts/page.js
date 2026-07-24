@@ -31,7 +31,7 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import Modal from "../../../components/Modal";
 import { useApp } from "../../../context/AppContext";
-import { typeColor, accountTypes } from "@/lib/demoData";
+import { typeColor, accountTypes } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const WIZARD_STEPS = ["Mode", "Type", "Configure"];
@@ -95,7 +95,7 @@ export default function AccountsPage() {
 
   const tabs = [
     { key: "Real", label: "Real" },
-    { key: "Demo", label: "Demo" },
+    { key: "Practice", label: "Practice" },
   ];
 
   const openWizard = () => {
@@ -107,7 +107,7 @@ export default function AccountsPage() {
   const handleCreate = () => {
     const acct = addAccount(newAcct);
     setModalOpen(false);
-    setTab(newAcct.mode === "Demo" ? "Demo" : "Real");
+    setTab(newAcct.mode === "Practice" ? "Practice" : "Real");
     showToast(`Account #${acct.id} created successfully`);
   };
 
@@ -146,7 +146,7 @@ export default function AccountsPage() {
         </Button>
       </header>
 
-      {/* Controls: Real/Demo toggle + sort + view */}
+      {/* Controls: Real/Practice toggle + sort + view */}
       <div className={styles.controls}>
         <div className={styles.segToggle}>
           {tabs.map((t) => (
@@ -294,7 +294,7 @@ export default function AccountsPage() {
           <div className={styles.optionGrid}>
             {[
               { id: "Real", title: "Real Account", desc: "Trade with real funds and withdraw profits." },
-              { id: "Demo", title: "Demo Account", desc: "Practice risk-free with $10,000 virtual funds." },
+              { id: "Practice", title: "Practice Account", desc: "Practice risk-free with $10,000 virtual funds." },
             ].map((o) => (
               <button
                 key={o.id}

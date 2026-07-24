@@ -6,7 +6,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import CountUp from "@/app/components/CountUp";
 import { useApp } from "@/app/context/AppContext";
-import { ordersSummary, analytics, closedOrders, formatMoney } from "@/lib/demoData";
+import { ordersSummary, analytics, closedOrders, formatMoney } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const PERIODS = ["Today", "1W", "1M", "3M", "All"];

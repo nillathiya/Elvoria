@@ -6,7 +6,7 @@ import Card from "@/app/components/Card";
 import Button from "@/app/components/Button";
 import Badge from "@/app/components/Badge";
 import { useApp } from "@/app/context/AppContext";
-import { copyStrategies } from "@/lib/demoData";
+import { copyStrategies } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const SORTS = [

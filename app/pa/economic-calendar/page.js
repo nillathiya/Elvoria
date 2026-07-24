@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { CalendarDays } from "lucide-react";
 import Card from "@/app/components/Card";
-import { economicEvents } from "@/lib/demoData";
+import { economicEvents } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const IMPACTS = ["All", "High", "Medium", "Low"];

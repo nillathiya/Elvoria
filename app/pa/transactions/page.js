@@ -7,7 +7,7 @@ import Badge from "@/app/components/Badge";
 import Button from "@/app/components/Button";
 import Table from "@/app/components/Table";
 import { useApp } from "@/app/context/AppContext";
-import { closedOrders, formatMoney } from "@/lib/demoData";
+import { closedOrders, formatMoney } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const PER_PAGE = 10;

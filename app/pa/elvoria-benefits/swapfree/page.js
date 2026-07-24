@@ -6,7 +6,7 @@ import Card from "@/app/components/Card";
 import Badge from "@/app/components/Badge";
 import Table from "@/app/components/Table";
 import { useApp } from "@/app/context/AppContext";
-import { swapFreeInstruments } from "@/lib/demoData";
+import { swapFreeInstruments } from "@/lib/uiData";
 import styles from "./page.module.css";
 
 const benefits = [
